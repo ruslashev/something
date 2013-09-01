@@ -16,6 +16,11 @@ GLuint LoadShader(GLenum type, const char *src)
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
 
 		char *log = new (std::nothrow) char[logLength];
+		if (!log) {
+			printf("failed\n"\
+					"And even failed to allocate memory for compile log.\n");
+			return 0;
+		}
 		glGetShaderInfoLog(shader, logLength, NULL, log);
 
 		printf("failed:\n%s", log);
@@ -46,6 +51,11 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 		glGetProgramiv(glslProgram, GL_INFO_LOG_LENGTH, &logLength);
 
 		char *log = new (std::nothrow) char[logLength];
+		if (!log) {
+			printf("failed\n"\
+					"And even failed to allocate memory for link info log.\n");
+			return 0;
+		}
 		glGetProgramInfoLog(glslProgram, logLength, NULL, log);
 
 		printf("failed:\n%s", log);

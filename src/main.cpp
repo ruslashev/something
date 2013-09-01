@@ -22,6 +22,16 @@ int main()
 		"    gl_FragColor[2] = 1.0;"                  "\n" \
 		"}"                                           "\n";
 
+	float triVertices[] = {
+		 0.0,  0.5,
+		-0.5, -0.5,
+		 0.5, -0.5
+	};
+	GLuint VBOtriangle;
+	glGenBuffers(1, &VBOtriangle);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOtriangle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triVertices), triVertices, GL_STATIC_DRAW);
+
 	GLuint vertShader = LoadShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = LoadShader(GL_FRAGMENT_SHADER, fragShaderSrc);
 	if (!vertShader || !fragShader)
@@ -35,12 +45,6 @@ int main()
 	if (attrib_pos2D == -1)
 		return 2;
 
-	float triVertices[] = {
-		 0.0,  0.5,
-		-0.5, -0.5,
-		 0.5, -0.5
-	};
-
 	while (!glfwWindowShouldClose(window.win))
 	{
 		glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -48,7 +52,6 @@ int main()
 
 		glUseProgram(glslProgram);
 		glEnableVertexAttribArray(attrib_pos2D);
-
 		// Describe our vertices array to OpenGL (it can't guess its format automatically)
 		glVertexAttribPointer(
 			attrib_pos2D,      // attribute
@@ -56,7 +59,7 @@ int main()
 			GL_FLOAT,          // the type of each element
 			GL_FALSE,          // take our values as-is
 			0,                 // no extra data between each position
-			triVertices        // pointer to the C array
+			0                  // pointer to the C array
 		);
 
 		// Push each element in buffer_vertices to the vertex shader
@@ -68,5 +71,6 @@ int main()
 	}
 
 	glDeleteProgram(glslProgram);
+	glDeleteBuffers(1, &VBOtriangle);
 }
 
