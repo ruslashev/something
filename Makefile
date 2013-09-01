@@ -7,7 +7,7 @@ all: $(EXECNAME)
 	./$(EXECNAME)
 
 objs/%.o: src/%.cpp
-	$(CXX) -c -o $@ $< -Wall -g3 -Og -std=c++0x
+	$(CXX) -c -o $@ $< -Wall -g -std=c++0x
 
 $(EXECNAME): $(OBJS)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)

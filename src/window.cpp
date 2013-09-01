@@ -5,15 +5,23 @@ Window::Window(int newWidth, int newHeight, const char *title)
 	if (!glfwInit())
 		fprintf(stderr, "Failed to initialize GLFW\n");
 
+	width = newWidth;
+	height = newHeight;
+
 	glfwSetErrorCallback(CallbackError);
-	glfwSetFramebufferSizeCallback(win, CallbackFBsizeChange);
 
 	win = glfwCreateWindow(newWidth, newHeight, title, NULL, NULL);
 	if (!win)
 		fprintf(stderr, "Failed to open window\n");
 
+	glfwSetFramebufferSizeCallback(win, CallbackFBsizeChange);
+
 	glfwMakeContextCurrent(win);
-	CallbackFBsizeChange(win, newWidth, newHeight);
+
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
+		fprintf(stderr, "glewInit failed: %s\n", glewGetErrorString(err));
+	fprintf(stdout, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
 }
 
 void CallbackError(int errorCode, const char *description)
