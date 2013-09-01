@@ -1,4 +1,6 @@
 #include "main.hpp"
+#include "window.hpp"
+#include "graphics.hpp"
 
 using namespace std;
 
@@ -20,51 +22,18 @@ int main()
 		"    gl_FragColor[2] = 1.0;"                  "\n" \
 		"}"                                           "\n";
 
-	printf("Compiling vertex shader\n");
+	GLuint vertShader = LoadShader(GL_VERTEX_SHADER, vertShaderSrc);
+	GLuint fragShader = LoadShader(GL_FRAGMENT_SHADER, fragShaderSrc);
+	if (!vertShader || !fragShader)
+		return 2;
 
-	GLint compileStatus = GL_FALSE;
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertShaderSrc, NULL);
-	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &compileStatus);
-	if (compileStatus == false) {
-		fprintf(stderr, "Error in vertex shader\n");
-		return 1;
-	}
+	GLuint glslProgram = LinkShaders(vertShader, fragShader);
+	if (!glslProgram)
+		return 2;
 
-	printf("Compiling fragment shader\n");
-
-	GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, &fragShaderSrc, NULL);
-	glCompileShader(fragShader);
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &compileStatus);
-	if (compileStatus == false) {
-		fprintf(stderr, "Error in fragment shader\n");
-		return 1;
-	}
-
-	printf("Linking shaders\n");
-
-	GLint linkStatus = GL_FALSE;
-	GLuint glslProgram = glCreateProgram();
-	glAttachShader(glslProgram, vertexShader);
-	glAttachShader(glslProgram, fragShader);
-	glLinkProgram(glslProgram);
-	glGetProgramiv(glslProgram, GL_LINK_STATUS, &linkStatus);
-	if (!linkStatus) {
-		fprintf(stderr, "Failed to link shaders\n");
-		return 1;
-	}
-
-	printf("Binding attribute\n");
-
-	GLint attrib_pos2D;
-	const char *attributeName = "pos2D";
-	attrib_pos2D = glGetAttribLocation(glslProgram, attributeName);
-	if (attrib_pos2D == -1) {
-		fprintf(stderr, "Could not bind attribute %s\n", attributeName);
-		return 1;
-	}
+	GLint attrib_pos2D = BindAttribute("pos2D", glslProgram);
+	if (attrib_pos2D == -1)
+		return 2;
 
 	float triVertices[] = {
 		 0.0,  0.5,

@@ -2,6 +2,5 @@
 #define MAIN_HPP
 
 #include <string>
-#include "window.hpp"
 
 #endif
