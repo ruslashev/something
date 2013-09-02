@@ -80,3 +80,14 @@ GLint BindAttribute(const char *name, GLuint &glslProgram)
 	return attribute;
 }
 
+GLint BindUniform(const char *name, GLuint &glslProgram)
+{
+	printf("Binding uniform\t\t\t");
+	GLint uniform = glGetUniformLocation(glslProgram, name);
+	if (uniform  == -1) {
+		printf("failed\n");
+		return -1;
+	}
+	printf("success\n");
+	return uniform;
+}

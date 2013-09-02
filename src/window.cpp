@@ -6,7 +6,8 @@ Window::Window(int newWidth, int newHeight, const char *title)
 	if (!glfwInit()) {
 		printf("failed\n");
 	}
-	printf("success, v %d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR);
+	printf("success, v %d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, \
+			GLFW_VERSION_REVISION);
 
 	width = newWidth;
 	height = newHeight;
