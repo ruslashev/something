@@ -70,7 +70,7 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 
 GLint BindAttribute(const char *name, GLuint &glslProgram)
 {
-	printf("Binding attribute\t\t\t");
+	printf("Binding attribute %12s\t\t", name);
 	GLint attribute = glGetAttribLocation(glslProgram, name);
 	if (attribute == -1) {
 		printf("failed\n");
@@ -82,7 +82,7 @@ GLint BindAttribute(const char *name, GLuint &glslProgram)
 
 GLint BindUniform(const char *name, GLuint &glslProgram)
 {
-	printf("Binding uniform\t\t\t");
+	printf("Binding uniform   %12s\t\t", name);
 	GLint uniform = glGetUniformLocation(glslProgram, name);
 	if (uniform  == -1) {
 		printf("failed\n");

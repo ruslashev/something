@@ -3,9 +3,9 @@
 Window::Window(int newWidth, int newHeight, const char *title)
 {
 	printf("Initializing GLFW\t\t\t");
-	if (!glfwInit()) {
+	if (!glfwInit())
 		printf("failed\n");
-	}
+
 	printf("success, v %d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, \
 			GLFW_VERSION_REVISION);
 
@@ -16,9 +16,9 @@ Window::Window(int newWidth, int newHeight, const char *title)
 
 	printf("Creating a window\t\t\t");
 	win = glfwCreateWindow(newWidth, newHeight, title, NULL, NULL);
-	if (!win) {
+	if (!win)
 		printf("failed\n");
-	}
+
 	printf("success\n");
 
 	glfwSetFramebufferSizeCallback(win, CallbackFBsizeChange);
