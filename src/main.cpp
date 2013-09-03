@@ -58,9 +58,9 @@ int main()
 
 	while (!glfwWindowShouldClose(window.win))
 	{
-		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(0, 1, 0));
+		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(0, 0, 1));
 		glm::mat4 modelMat = glm::translate(glm::mat4(1), glm::vec3(0.0, 0.0, -4.0));
-		glm::mat4 viewMat = glm::lookAt(glm::vec3(0.0, 4.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 viewMat = glm::lookAt(glm::vec3(0.0, 0.0, -10.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 		glm::mat4 projectionMat = glm::perspective(60.f, 1.0f*window.width/window.height, 0.1f, 10.0f);
 		glm::mat4 MVP = projectionMat * viewMat * modelMat * anim;
 
