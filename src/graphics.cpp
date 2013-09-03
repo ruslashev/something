@@ -1,5 +1,38 @@
 #include "graphics.hpp"
 
+bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements)
+{
+	printf("Loading OBJ model %12s\t\t", filename);
+
+	std::ifstream ifs(filename, std::ifstream::in);
+	if (!ifs) {
+		printf("failed: failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
+		return false;
+	}
+
+	std::string line;
+	while (getline(ifs, line)) {
+		if (line.substr(0,2) == "v ") {
+			std::istringstream s(line.substr(2));
+			glm::vec4 v;
+			s >> v.x; s >> v.y; s >> v.z; v.w = 1.0f;
+			vertices.push_back(v);
+		}  else if (line.substr(0,2) == "f ") {
+			std::istringstream s(line.substr(2));
+			GLushort a,b,c;
+			s >> a; s >> b; s >> c;
+			a--; b--; c--;
+			elements.push_back(a); elements.push_back(b); elements.push_back(c);
+		}
+		// TODO
+		else if (line[0] == '#') { /* ignoring this line */ }
+		else { /* ignoring this line */ }
+	}
+
+	printf("success\n");
+	return true;
+}
+
 GLuint LoadShader(GLenum type, const char *src)
 {
 	printf("Compiling %s shader \t\t", \
@@ -61,6 +94,19 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 		printf("failed:\n%s", log);
 
 		delete [] log;
+		return 0;
+	}
+
+	printf("success\n");
+
+	printf("Validating GLSL program\t\t\t");
+
+	GLint validateSuccess = GL_FALSE;
+	glValidateProgram(glslProgram);
+	glGetProgramiv(glslProgram, GL_VALIDATE_STATUS, &validateSuccess);
+	if (!validateSuccess) {
+		printf("failed\n");
+		// TODO printLog(..)
 		return 0;
 	}
 
