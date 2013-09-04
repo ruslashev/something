@@ -17,6 +17,7 @@ GLuint LoadShader(GLenum type, const char *src);
 GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader);
 GLint BindAttribute(const char *name, GLuint &glslProgram);
 GLint BindUniform(const char *name, GLuint &glslProgram);
+void printLog(GLuint &shaderOrProg);
 
 #endif
 

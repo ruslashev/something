@@ -24,8 +24,6 @@ bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector
 			a--; b--; c--;
 			elements.push_back(a); elements.push_back(b); elements.push_back(c);
 		}
-		// TODO
-		else if (line[0] == '#') { /* ignoring this line */ }
 		else { /* ignoring this line */ }
 	}
 
@@ -45,20 +43,8 @@ GLuint LoadShader(GLenum type, const char *src)
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileSuccess);
 	if (!compileSuccess) {
-		GLint logLength = 0;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-
-		char *log = new (std::nothrow) char[logLength];
-		if (!log) {
-			printf("failed\n"\
-					"And even failed to allocate memory for compile log.\n");
-			return 0;
-		}
-		glGetShaderInfoLog(shader, logLength, NULL, log);
-
-		printf("failed:\n%s", log);
-
-		delete [] log;
+		printf("failed:\n");
+		printLog(shader);
 		return 0;
 	}
 
@@ -80,33 +66,19 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 
 	glGetProgramiv(glslProgram, GL_LINK_STATUS, &linkSuccess);
 	if (!linkSuccess) {
-		GLint logLength = 0;
-		glGetProgramiv(glslProgram, GL_INFO_LOG_LENGTH, &logLength);
-
-		char *log = new (std::nothrow) char[logLength];
-		if (!log) {
-			printf("failed\n"\
-					"And even failed to allocate memory for link info log.\n");
-			return 0;
-		}
-		glGetProgramInfoLog(glslProgram, logLength, NULL, log);
-
-		printf("failed:\n%s", log);
-
-		delete [] log;
+		printf("failed:\n");
+		printLog(glslProgram);
 		return 0;
 	}
 
-	printf("success\n");
-
-	printf("Validating GLSL program\t\t\t");
+	printf("success\n" "Validating GLSL program\t\t\t");
 
 	GLint validateSuccess = GL_FALSE;
 	glValidateProgram(glslProgram);
 	glGetProgramiv(glslProgram, GL_VALIDATE_STATUS, &validateSuccess);
 	if (!validateSuccess) {
-		printf("failed\n");
-		// TODO printLog(..)
+		printf("failed:\n");
+		printLog(glslProgram);
 		return 0;
 	}
 
@@ -136,4 +108,28 @@ GLint BindUniform(const char *name, GLuint &glslProgram)
 	}
 	printf("success\n");
 	return uniform;
+}
+
+void printLog(GLuint &shaderOrProg)
+{
+	GLint logLength = 0;
+
+	if (glIsShader(shaderOrProg))
+		glGetShaderiv(shaderOrProg, GL_INFO_LOG_LENGTH, &logLength);
+	else
+		glGetProgramiv(shaderOrProg, GL_INFO_LOG_LENGTH, &logLength);
+
+	char *log = new (std::nothrow) char[logLength];
+	if (!log) {
+		printf("Failed to allocate memory for error log.\n");
+		return;
+	}
+
+	if (glIsShader(shaderOrProg))
+		glGetShaderInfoLog(shaderOrProg, logLength, NULL, log);
+	else
+		glGetProgramInfoLog(shaderOrProg, logLength, NULL, log);
+
+	printf("%s", log);
+	delete [] log;
 }
