@@ -1,5 +1,46 @@
 #include "graphics.hpp"
 
+void Mesh::FromOBJ(const char *filename)
+{
+	if (!loadOBJ(filename, vertices, elements))
+		exit(2);
+}
+
+void Mesh::Upload()
+{
+	if (vertices.size() > 0) {
+		glGenBuffers(1, &VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, \
+				vertices.size()*sizeof(vertices[0]), \
+				vertices.data(), GL_STATIC_DRAW);
+	} else
+		printf("Warning: Uploading empty vertex data\n");
+
+	if (elements.size() > 0) {
+		glGenBuffers(1, &IBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, \
+				elements.size()*sizeof(elements[0]), \
+				elements.data(), GL_STATIC_DRAW);
+	} else
+		printf("Warning: Uploading empty elements data\n");
+}
+
+void Mesh::Draw(GLint &attrib_vCoord)
+{
+	glEnableVertexAttribArray(attrib_vCoord);
+	glVertexAttribPointer(attrib_vCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
+	glDisableVertexAttribArray(attrib_vCoord);
+}
+
+Mesh::~Mesh()
+{
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &IBO);
+}
+
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements)
 {
 	printf("Loading OBJ model %12s\t\t", filename);

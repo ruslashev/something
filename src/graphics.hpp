@@ -12,6 +12,22 @@
 #include <sstream>
 #include <glm/gtc/type_ptr.hpp>
 
+class Mesh
+{
+private:
+	GLuint VBO, IBO;
+	std::vector<glm::vec4> vertices;
+	std::vector<GLushort> elements;
+
+public:
+	Mesh() : VBO(0), IBO(0) {};
+	~Mesh();
+
+	void FromOBJ(const char *filename);
+	void Upload();
+	void Draw(GLint &attrib_vCoord);
+};
+
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements);
 GLuint LoadShader(GLenum type, const char *src);
 GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader);
