@@ -34,6 +34,7 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader);
 GLint BindAttribute(const char *name, GLuint &glslProgram);
 GLint BindUniform(const char *name, GLuint &glslProgram);
 void printLog(GLuint &shaderOrProg);
+void printStatus(bool success);
 
 #endif
 

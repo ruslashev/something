@@ -1,5 +1,8 @@
 #include "graphics.hpp"
 
+#define SUCCESS_STR "\x1b[32m" "✓" "\x1b[0m"
+#define FAIL_STR    "\x1b[31m" "✗" "\x1b[0m"
+
 void Mesh::FromOBJ(const char *filename)
 {
 	if (!loadOBJ(filename, vertices, elements))
@@ -43,11 +46,11 @@ Mesh::~Mesh()
 
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements)
 {
-	printf("Loading OBJ model %12s\t\t", filename);
+	printf("Loading OBJ model %12s\t\t\t", filename);
 
 	std::ifstream ifs(filename, std::ifstream::in);
 	if (!ifs) {
-		printf("failed: failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
+		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
 		return false;
 	}
 
@@ -64,17 +67,16 @@ bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector
 			s >> a; s >> b; s >> c;
 			a--; b--; c--;
 			elements.push_back(a); elements.push_back(b); elements.push_back(c);
-		}
-		else { /* ignoring this line */ }
+		} else { /* ignoring this line */ }
 	}
 
-	printf("success\n");
+	printf(SUCCESS_STR "\n");
 	return true;
 }
 
 GLuint LoadShader(GLenum type, const char *src)
 {
-	printf("Compiling %s shader \t\t", \
+	printf("Compiling %s shader \t\t\t", \
 			type == GL_VERTEX_SHADER ? "vertex" : "fragment");
 
 	GLint compileSuccess = GL_FALSE;
@@ -84,18 +86,18 @@ GLuint LoadShader(GLenum type, const char *src)
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileSuccess);
 	if (!compileSuccess) {
-		printf("failed:\n");
+		printf(FAIL_STR "\n");
 		printLog(shader);
 		return 0;
 	}
 
-	printf("success\n");
+	printf(SUCCESS_STR "\n");
 	return shader;
 }
 
 GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 {
-	printf("Linking shaders\t\t\t\t");
+	printf("Linking shaders\t\t\t\t\t");
 
 	GLint linkSuccess = GL_FALSE;
 	GLuint glslProgram = glCreateProgram();
@@ -107,47 +109,47 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 
 	glGetProgramiv(glslProgram, GL_LINK_STATUS, &linkSuccess);
 	if (!linkSuccess) {
-		printf("failed:\n");
+		printf(FAIL_STR "\n");
 		printLog(glslProgram);
 		return 0;
 	}
 
-	printf("success\n" "Validating GLSL program\t\t\t");
+	printf(SUCCESS_STR "\n" "Validating GLSL program\t\t\t\t");
 
 	GLint validateSuccess = GL_FALSE;
 	glValidateProgram(glslProgram);
 	glGetProgramiv(glslProgram, GL_VALIDATE_STATUS, &validateSuccess);
 	if (!validateSuccess) {
-		printf("failed:\n");
+		printf(FAIL_STR "\n");
 		printLog(glslProgram);
 		return 0;
 	}
 
-	printf("success\n");
+	printf(SUCCESS_STR "\n");
 	return glslProgram;
 }
 
 GLint BindAttribute(const char *name, GLuint &glslProgram)
 {
-	printf("Binding attribute %12s\t\t", name);
+	printf("Binding attribute %12s\t\t\t", name);
 	GLint attribute = glGetAttribLocation(glslProgram, name);
 	if (attribute == -1) {
-		printf("failed\n");
+		printf("\x1b[31m" "✗" "\x1b[0m" "\n");
 		return -1;
 	}
-	printf("success\n");
+	printf("\x1b[32m" "✓" "\x1b[0m" "\n");
 	return attribute;
 }
 
 GLint BindUniform(const char *name, GLuint &glslProgram)
 {
-	printf("Binding uniform   %12s\t\t", name);
+	printf("Binding uniform   %12s\t\t\t", name);
 	GLint uniform = glGetUniformLocation(glslProgram, name);
 	if (uniform  == -1) {
-		printf("failed\n");
+		printf("\x1b[31m" "✗" "\x1b[0m" "\n");
 		return -1;
 	}
-	printf("success\n");
+	printf("\x1b[32m" "✓" "\x1b[0m" "\n");
 	return uniform;
 }
 
@@ -174,3 +176,4 @@ void printLog(GLuint &shaderOrProg)
 	printf("%s", log);
 	delete [] log;
 }
+

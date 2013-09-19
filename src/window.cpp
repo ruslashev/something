@@ -1,12 +1,15 @@
 #include "window.hpp"
 
+#define SUCCESS_STR "\x1b[32m" "✓" "\x1b[0m"
+#define FAIL_STR    "\x1b[31m" "✗" "\x1b[0m"
+
 Window::Window(int newWidth, int newHeight, const char *title)
 {
-	printf("Initializing GLFW\t\t\t");
+	printf("Initializing GLFW\t\t\t\t");
 	if (!glfwInit())
-		printf("failed\n");
+		printf(FAIL_STR);
 
-	printf("success, v %d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, \
+	printf(SUCCESS_STR " v%d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, \
 			GLFW_VERSION_REVISION);
 
 	width = newWidth;
@@ -14,22 +17,22 @@ Window::Window(int newWidth, int newHeight, const char *title)
 
 	glfwSetErrorCallback(CallbackError);
 
-	printf("Creating a window\t\t\t");
+	printf("Creating a window\t\t\t\t");
 	win = glfwCreateWindow(newWidth, newHeight, title, NULL, NULL);
 	if (!win)
-		printf("failed\n");
+		printf(FAIL_STR);
 
-	printf("success\n");
+	printf(SUCCESS_STR "\n");
 
 	glfwSetFramebufferSizeCallback(win, CallbackFBsizeChange);
 
 	glfwMakeContextCurrent(win);
 
-	printf("Initializing GLEW\t\t\t");
+	printf("Initializing GLEW\t\t\t\t");
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
-		printf("failed: %s\n", glewGetErrorString(err));
-	printf("success, v %s\n", glewGetString(GLEW_VERSION));
+		printf(FAIL_STR ": %s\n", glewGetErrorString(err));
+	printf(SUCCESS_STR " v%s\n", glewGetString(GLEW_VERSION));
 }
 
 void CallbackError(int errorCode, const char *description)
