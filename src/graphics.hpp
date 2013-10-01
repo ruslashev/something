@@ -16,12 +16,13 @@ class Mesh
 {
 private:
 	GLuint VBO, IBO;
-	std::vector<glm::vec4> vertices;
-	std::vector<GLushort> elements;
 
 public:
 	Mesh() : VBO(0), IBO(0) {};
 	~Mesh();
+
+	std::vector<glm::vec4> vertices;
+	std::vector<GLushort> elements;
 
 	void FromOBJ(const char *filename);
 	void Upload();

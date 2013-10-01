@@ -37,7 +37,8 @@ void Mesh::Draw(GLint &attrib_vCoord)
 {
 	glEnableVertexAttribArray(attrib_vCoord);
 	glVertexAttribPointer(attrib_vCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
-	glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
+	// glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 6*3*2);
 	glDisableVertexAttribArray(attrib_vCoord);
 }
 

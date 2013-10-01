@@ -25,9 +25,28 @@ int main()
 		"    gl_FragColor[2] = 1.0;"                      "\n" \
 		"}"                                               "\n";
 
-	Mesh bat;
-	bat.FromOBJ("bat.obj");
-	bat.Upload();
+	const bool map[3][3] = {
+		{1, 1, 0},
+		{1, 0, 0},
+		{1, 1, 1},
+	};
+	std::vector<glm::vec4> mapVerts;
+	for (int y = 0; y < 3; y++) {
+		for (int x = 0; x < 3; x++) {
+			if (!map[y][x])
+				continue;
+			mapVerts.push_back(glm::vec4(x  , y  , 0, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0, 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0, 1));
+
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0, 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0, 1));
+		}
+	}
+	Mesh mapMesh;
+	mapMesh.vertices = mapVerts;
+	mapMesh.Upload();
 
 	GLuint vertShader = LoadShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = LoadShader(GL_FRAGMENT_SHADER, fragShaderSrc);
@@ -52,7 +71,7 @@ int main()
 		glClearColor(1, 1, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(0, 0, 1));
+		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(1, 1, 1));
 		glm::mat4 modelMat = glm::translate(glm::mat4(1), glm::vec3(0, 0, -4));
 		glm::mat4 viewMat = glm::lookAt(glm::vec3(0, 0, -10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 		glm::mat4 projectionMat = glm::perspective(60.f, 1.0f*window.width/window.height, 0.1f, 10.0f);
@@ -60,7 +79,7 @@ int main()
 
 		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(MVP));
 
-		bat.Draw(attrib_vCoord);
+		mapMesh.Draw(attrib_vCoord);
 
 		glfwSwapBuffers(window.win);
 		glfwPollEvents();
