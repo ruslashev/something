@@ -1,7 +1,10 @@
 #include "graphics.hpp"
 
-#define SUCCESS_STR "\x1b[32m" "✓" "\x1b[0m"
-#define FAIL_STR    "\x1b[31m" "✗" "\x1b[0m"
+#define INFO_COLOR  "\x1b[36m"
+#define CLEAR_COLOR "\x1b[0m"
+
+#define SUCCESS_STR "\x1b[32m" "✓" CLEAR_COLOR
+#define FAIL_STR    "\x1b[31m" "✗" CLEAR_COLOR
 
 void Mesh::FromOBJ(const char *filename)
 {
@@ -46,7 +49,7 @@ Mesh::~Mesh()
 
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements)
 {
-	printf("Loading OBJ model %12s\t\t\t", filename);
+	printf("Loading OBJ model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
 
 	std::ifstream ifs(filename, std::ifstream::in);
 	if (!ifs) {
@@ -131,25 +134,25 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 
 GLint BindAttribute(const char *name, GLuint &glslProgram)
 {
-	printf("Binding attribute %12s\t\t\t", name);
+	printf("Binding attribute %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
 	GLint attribute = glGetAttribLocation(glslProgram, name);
 	if (attribute == -1) {
-		printf("\x1b[31m" "✗" "\x1b[0m" "\n");
+		printf(FAIL_STR "\n");
 		return -1;
 	}
-	printf("\x1b[32m" "✓" "\x1b[0m" "\n");
+	printf(SUCCESS_STR "\n");
 	return attribute;
 }
 
 GLint BindUniform(const char *name, GLuint &glslProgram)
 {
-	printf("Binding uniform   %12s\t\t\t", name);
+	printf("Binding uniform %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
 	GLint uniform = glGetUniformLocation(glslProgram, name);
 	if (uniform  == -1) {
-		printf("\x1b[31m" "✗" "\x1b[0m" "\n");
+		printf(FAIL_STR "\n");
 		return -1;
 	}
-	printf("\x1b[32m" "✓" "\x1b[0m" "\n");
+	printf(SUCCESS_STR "\n");
 	return uniform;
 }
 
