@@ -1,4 +1,5 @@
 #include "graphics.hpp"
+#include "image.h"
 
 #define INFO_COLOR  "\x1b[36m"
 #define CLEAR_COLOR "\x1b[0m"
@@ -31,12 +32,34 @@ void Mesh::Upload()
 				elements.data(), GL_STATIC_DRAW);
 	} else
 		printf("Warning: Uploading empty elements data\n");
+
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // TODO
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, \
+			gimp_image.pixel_data);
+	if (texCoords.size() > 0) {
+		glGenBuffers(1, &VBO_tex);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_tex);
+		glBufferData(GL_ARRAY_BUFFER, \
+				texCoords.size()*sizeof(texCoords[0]), \
+				texCoords.data(), GL_STATIC_DRAW);
+	} else
+		printf("Warning: Uploading empty texCoords data\n");
 }
 
-void Mesh::Draw(GLint &attrib_vCoord)
+void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
 {
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glUniform1i(textUnif, /*GL_TEXTURE*/0);
+
 	glEnableVertexAttribArray(attrib_vCoord);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glVertexAttribPointer(attrib_vCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(attrib_texCoord);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_tex);
+	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	// glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
 	glDrawArrays(GL_TRIANGLES, 0, 6*3*2);
 	glDisableVertexAttribArray(attrib_vCoord);
@@ -46,6 +69,7 @@ Mesh::~Mesh()
 {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &IBO);
+	glDeleteTextures(1, &textureID);
 }
 
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements)
