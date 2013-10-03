@@ -28,69 +28,8 @@ int main()
 		"    gl_FragColor = texture2D(text, vec2(ftexCoord.x, 1.0-ftexCoord.y));"     "\n" \
 		"}"                                                  "\n";
 
-	const bool map[3][3] = {
-		{1, 1, 0},
-		{1, 0, 0},
-		{1, 1, 1},
-	};
-	std::vector<glm::vec4> mapVerts;
-	std::vector<glm::vec2> mapTexcoords;
-	for (int y = 0; y < 3; y++) {
-		for (int x = 0; x < 3; x++) {
-			if (!map[2-y][x])
-				continue;
-			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
-
-			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
-
-			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0+1, 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
-
-			for (int i = 1; i <= 6; i++) {
-				mapTexcoords.push_back(glm::vec2(0, 1));
-				mapTexcoords.push_back(glm::vec2(0, 0));
-				mapTexcoords.push_back(glm::vec2(1, 0));
-				mapTexcoords.push_back(glm::vec2(0, 1));
-				mapTexcoords.push_back(glm::vec2(1, 1));
-				mapTexcoords.push_back(glm::vec2(1, 0));
-			}
-		}
-	}
 	Mesh mapMesh;
-	mapMesh.vertices = mapVerts;
-	mapMesh.texCoords = mapTexcoords;
+	mapMesh.FromVXL("level.vxl");
 	mapMesh.Upload();
 
 	GLuint vertShader = LoadShader(GL_VERTEX_SHADER, vertShaderSrc);

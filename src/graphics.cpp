@@ -9,8 +9,78 @@
 
 void Mesh::FromOBJ(const char *filename)
 {
+	// TODO
 	if (!loadOBJ(filename, vertices, elements))
 		exit(2);
+}
+
+void Mesh::FromVXL(const char *filename)
+{
+	printf("Loading VXL model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
+
+	std::ifstream ifs(filename, std::ifstream::in);
+	if (!ifs) {
+		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
+		exit(2);
+	}
+
+	std::string line;
+	while (getline(ifs, line)) {
+		if (line.substr(0,2) == "v ") {
+			std::istringstream s(line.substr(2));
+			int x, y, z;
+			s >> x; s >> y; s >> z;
+			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
+			vertices.push_back(glm::vec4(x  , y  , z  , 1));
+			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
+			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
+			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
+			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
+			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
+
+			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
+			vertices.push_back(glm::vec4(x  , y  , z  , 1));
+			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
+			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
+			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
+			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
+			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
+
+			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
+			vertices.push_back(glm::vec4(x  , y  , z  , 1));
+			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
+			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
+			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
+			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z+1, 1));
+			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
+
+			for (int i = 1; i <= 6; i++) {
+				texCoords.push_back(glm::vec2(0, 1));
+				texCoords.push_back(glm::vec2(0, 0));
+				texCoords.push_back(glm::vec2(1, 0));
+				texCoords.push_back(glm::vec2(0, 1));
+				texCoords.push_back(glm::vec2(1, 1));
+				texCoords.push_back(glm::vec2(1, 0));
+			}
+		} else { /* ignoring this line */ }
+	}
+
+	printf(SUCCESS_STR "\n");
 }
 
 void Mesh::Upload()
@@ -35,7 +105,7 @@ void Mesh::Upload()
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // TODO
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, \
 			gimp_image.pixel_data);
 	if (texCoords.size() > 0) {
@@ -89,7 +159,7 @@ bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector
 			glm::vec4 v;
 			s >> v.x; s >> v.y; s >> v.z; v.w = 1.0f;
 			vertices.push_back(v);
-		}  else if (line.substr(0,2) == "f ") {
+		} else if (line.substr(0,2) == "f ") {
 			std::istringstream s(line.substr(2));
 			GLushort a,b,c;
 			s >> a; s >> b; s >> c;
