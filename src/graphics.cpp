@@ -61,7 +61,7 @@ void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_tex);
 	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	// glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
-	glDrawArrays(GL_TRIANGLES, 0, 6*3*2);
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glDisableVertexAttribArray(attrib_vCoord);
 }
 

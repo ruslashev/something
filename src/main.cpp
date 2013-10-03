@@ -37,21 +37,55 @@ int main()
 	std::vector<glm::vec2> mapTexcoords;
 	for (int y = 0; y < 3; y++) {
 		for (int x = 0; x < 3; x++) {
-			if (!map[y][x])
+			if (!map[2-y][x])
 				continue;
-			mapVerts.push_back(glm::vec4(x  , y+1, 0, 1));
-			mapVerts.push_back(glm::vec4(x  , y  , 0, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0, 1));
-			mapVerts.push_back(glm::vec4(x  , y+1, 0, 1));
-			mapVerts.push_back(glm::vec4(x+1, y+1, 0, 1));
-			mapVerts.push_back(glm::vec4(x+1, y  , 0, 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
 
-			mapTexcoords.push_back(glm::vec2(0  , 0+1));
-			mapTexcoords.push_back(glm::vec2(0  , 0  ));
-			mapTexcoords.push_back(glm::vec2(0+1, 0  ));
-			mapTexcoords.push_back(glm::vec2(0  , 0+1));
-			mapTexcoords.push_back(glm::vec2(0+1, 0+1));
-			mapTexcoords.push_back(glm::vec2(0+1, 0  ));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
+
+			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y  , 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
+			mapVerts.push_back(glm::vec4(x  , y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0+1, 1));
+			mapVerts.push_back(glm::vec4(x+1, y+1, 0  , 1));
+
+			for (int i = 1; i <= 6; i++) {
+				mapTexcoords.push_back(glm::vec2(0, 1));
+				mapTexcoords.push_back(glm::vec2(0, 0));
+				mapTexcoords.push_back(glm::vec2(1, 0));
+				mapTexcoords.push_back(glm::vec2(0, 1));
+				mapTexcoords.push_back(glm::vec2(1, 1));
+				mapTexcoords.push_back(glm::vec2(1, 0));
+			}
 		}
 	}
 	Mesh mapMesh;
@@ -83,7 +117,7 @@ int main()
 		glClearColor(1, 1, 1, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(0, 1, 0));
+		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(1, 1, 1));
 		glm::mat4 modelMat = glm::translate(glm::mat4(1), glm::vec3(0, 0, -4));
 		glm::mat4 viewMat = glm::lookAt(glm::vec3(0, 0, -10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 		glm::mat4 projectionMat = glm::perspective(60.f, 1.0f*window.width/window.height, 0.1f, 10.0f);
