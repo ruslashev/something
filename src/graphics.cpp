@@ -1,5 +1,5 @@
 #include "graphics.hpp"
-#include "image.h"
+#include "image.hpp"
 
 #define INFO_COLOR  "\x1b[36m"
 #define CLEAR_COLOR "\x1b[0m"
@@ -88,8 +88,8 @@ void Mesh::Upload()
 	if (vertices.size() > 0) {
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, \
-				vertices.size()*sizeof(vertices[0]), \
+		glBufferData(GL_ARRAY_BUFFER,
+				vertices.size()*sizeof(vertices[0]),
 				vertices.data(), GL_STATIC_DRAW);
 	} else
 		printf("Warning: Uploading empty vertex data\n");
@@ -97,8 +97,8 @@ void Mesh::Upload()
 	if (elements.size() > 0) {
 		glGenBuffers(1, &IBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, \
-				elements.size()*sizeof(elements[0]), \
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+				elements.size()*sizeof(elements[0]),
 				elements.data(), GL_STATIC_DRAW);
 	} else
 		printf("Warning: Uploading empty elements data\n");
@@ -106,13 +106,13 @@ void Mesh::Upload()
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, \
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE,
 			gimp_image.pixel_data);
 	if (texCoords.size() > 0) {
 		glGenBuffers(1, &VBO_tex);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_tex);
-		glBufferData(GL_ARRAY_BUFFER, \
-				texCoords.size()*sizeof(texCoords[0]), \
+		glBufferData(GL_ARRAY_BUFFER,
+				texCoords.size()*sizeof(texCoords[0]),
 				texCoords.data(), GL_STATIC_DRAW);
 	} else
 		printf("Warning: Uploading empty texCoords data\n");
@@ -174,7 +174,7 @@ bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector
 
 GLuint LoadShader(GLenum type, const char *src)
 {
-	printf("Compiling %s shader \t\t\t", \
+	printf("Compiling %s shader \t\t\t",
 			type == GL_VERTEX_SHADER ? "vertex" : "fragment");
 
 	GLint compileSuccess = GL_FALSE;

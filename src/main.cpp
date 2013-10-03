@@ -7,26 +7,26 @@ using namespace std;
 int main()
 {
 	Window window(800, 600, "Something");
-
 	glEnable(GL_DEPTH_TEST);
 
-	const char *vertShaderSrc = \
-		"#version 120"                                       "\n" \
-		"uniform mat4 MVP;"                                  "\n" \
-		"attribute vec4 vCoord;"                             "\n" \
-		"attribute vec2 texCoord;"                           "\n" \
-		"varying vec2 ftexCoord;"                            "\n" \
-		"void main() {"                                      "\n" \
-		"    ftexCoord = texCoord;"                          "\n" \
-		"    gl_Position = MVP*vCoord;"                      "\n" \
-		"}"                                                  "\n";
-	const char *fragShaderSrc = \
-		"#version 120"                                       "\n" \
-		"varying vec2 ftexCoord;"                            "\n" \
-		"uniform sampler2D text;"                            "\n" \
-		"void main() {"                                      "\n" \
-		"    gl_FragColor = texture2D(text, vec2(ftexCoord.x, 1.0-ftexCoord.y));"     "\n" \
-		"}"                                                  "\n";
+#define GLSL(src) "#version 120\n" #src
+	const char *vertShaderSrc = GLSL(
+		uniform mat4 MVP;
+		attribute vec4 vCoord;
+		attribute vec2 texCoord;
+		varying vec2 ftexCoord;
+		void main() {
+			ftexCoord = texCoord;
+			gl_Position = MVP*vCoord;
+		}
+	);
+	const char *fragShaderSrc = GLSL(
+		varying vec2 ftexCoord;
+		uniform sampler2D text;
+		void main() {
+			gl_FragColor = texture2D(text, vec2(ftexCoord.x, 1.0-ftexCoord.y));
+		}
+	);
 
 	Mesh mapMesh;
 	mapMesh.FromVXL("level.vxl");

@@ -9,7 +9,7 @@ Window::Window(int newWidth, int newHeight, const char *title)
 	if (!glfwInit())
 		printf(FAIL_STR);
 
-	printf(SUCCESS_STR " v%d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR, \
+	printf(SUCCESS_STR " v%d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR,
 			GLFW_VERSION_REVISION);
 
 	width = newWidth;
