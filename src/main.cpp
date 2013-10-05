@@ -1,6 +1,7 @@
+#include "graphics.hpp"
 #include "main.hpp"
 #include "window.hpp"
-#include "graphics.hpp"
+#include "camera.hpp"
 
 using namespace std;
 
@@ -32,6 +33,10 @@ int main()
 	mapMesh.FromVXL("level.vxl");
 	mapMesh.Upload();
 
+	Camera cam;
+	cam.position = glm::vec3(0, 0, -10);
+	cam.yaw = cam.pitch = 0;
+
 	GLuint vertShader = LoadShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = LoadShader(GL_FRAGMENT_SHADER, fragShaderSrc);
 	if (!vertShader || !fragShader)
@@ -51,18 +56,32 @@ int main()
 	if (uniformMVP == -1)
 		return 2;
 
+	double simulationTime = 0;
+	double realTime = 0;
 	while (!glfwWindowShouldClose(window.win))
 	{
-		glClearColor(1, 1, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		realTime = glfwGetTime();
 
-		glm::mat4 anim = glm::rotate(glm::mat4(1), (float)glfwGetTime()*45, glm::vec3(1, 1, 1));
+		glm::mat4 anim;
+
+		while (simulationTime < realTime) {
+			// Update(time, dt)
+			simulationTime += 0.0016;
+			anim = glm::mat4(1);
+			//glm::rotate(glm::mat4(1), (float)simulationTime*45, glm::vec3(0, 1, 0));
+			cam.Update(&window.win, 0.0016);
+		}
+
 		glm::mat4 modelMat = glm::translate(glm::mat4(1), glm::vec3(0, 0, -4));
-		glm::mat4 viewMat = glm::lookAt(glm::vec3(0, 0, -10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-		glm::mat4 projectionMat = glm::perspective(60.f, 1.0f*window.width/window.height, 0.1f, 10.0f);
+		glm::mat4 viewMat = cam.LookAtMat();
+		const glm::mat4 projectionMat = glm::perspective(60.f,
+				1.0f*window.width/window.height, 0.1f, 50.0f);
 		glm::mat4 MVP = projectionMat * viewMat * modelMat * anim;
 
 		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(MVP));
+
+		glClearColor(1, 1, 1, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		mapMesh.Draw(attrib_vCoord, attrib_texCoord);
 
