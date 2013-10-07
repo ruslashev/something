@@ -33,9 +33,10 @@ int main()
 	mapMesh.FromVXL("level.vxl");
 	mapMesh.Upload();
 
-	Camera cam;
+	Camera cam(&window);
 	cam.position = glm::vec3(0, 0, -10);
-	cam.yaw = cam.pitch = 0;
+	cam.pitch = 0;
+	cam.yaw = M_PI;
 
 	GLuint vertShader = LoadShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = LoadShader(GL_FRAGMENT_SHADER, fragShaderSrc);
@@ -69,7 +70,7 @@ int main()
 			simulationTime += 0.0016;
 			anim = glm::mat4(1);
 			//glm::rotate(glm::mat4(1), (float)simulationTime*45, glm::vec3(0, 1, 0));
-			cam.Update(&window.win, 0.0016);
+			cam.Update(&window, 0.0016);
 		}
 
 		glm::mat4 modelMat = glm::translate(glm::mat4(1), glm::vec3(0, 0, -4));
@@ -84,6 +85,19 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		mapMesh.Draw(attrib_vCoord, attrib_texCoord);
+
+		// That was too easy not to do ----------
+		GLfloat gridSize = 10.0f;
+		glBegin(GL_LINES);
+		for (GLint i = -gridSize; i <= gridSize; i++)
+		{
+			glVertex3f(i, 0.f,  gridSize);
+			glVertex3f(i, 0.f, -gridSize);
+			glVertex3f(-gridSize, 0.f, i);
+			glVertex3f( gridSize, 0.f, i);
+		}
+		glEnd();
+		// --------------------------------------
 
 		glfwSwapBuffers(window.win);
 		glfwPollEvents();

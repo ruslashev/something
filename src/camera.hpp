@@ -11,9 +11,10 @@ public:
 	glm::vec3 position;
 	double pitch, yaw;
 
-	void Update(GLFWwindow **win, double dt);
+	Camera(Window *win);
+	void Update(Window *win, double dt);
 	void MoveForward(double dist);
-	void Strafe(double dist, glm::vec3 moveAxis);
+	void Strafe(double dist);
 	void Rotate(double byPitch, double byYaw);
 
 	glm::mat4 LookAtMat();
