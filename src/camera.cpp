@@ -1,11 +1,6 @@
 #include "window.hpp"
 #include "camera.hpp"
 
-Camera::Camera(Window *win)
-{
-	glfwSetCursorPos(win->win, win->width/2, win->height/2);
-}
-
 void Camera::MoveForward(double dist)
 {
 	position += glm::vec3(cos(yaw)*cos(pitch)*dist,
@@ -45,27 +40,24 @@ glm::mat4 Camera::LookAtMat()
 	);
 }
 
-void Camera::Update(Window *win, double dt)
+void Camera::Update(Window *wind, double dt)
 {
-	if (glfwGetKey(win->win, 'W'))
+	if (glfwGetKey(wind->win, 'W'))
 		MoveForward(10*dt);
-	if (glfwGetKey(win->win, 'S'))
+	if (glfwGetKey(wind->win, 'S'))
 		MoveForward(-10*dt);
 
-	if (glfwGetKey(win->win, 'A'))
+	if (glfwGetKey(wind->win, 'A'))
 		Strafe(10*dt);
-	if (glfwGetKey(win->win, 'D'))
+	if (glfwGetKey(wind->win, 'D'))
 		Strafe(-10*dt);
 
-	if (glfwGetKey(win->win, 'P'))
-		printf("%10f %10f\n", pitch, yaw);
-
-	double mouseX, mouseY;
-	glfwGetCursorPos(win->win, &mouseX, &mouseY);
-	glfwSetCursorPos(win->win, win->width/2, win->height/2);
-	double mouseDeltaX = (mouseX - win->width/2);
-	double mouseDeltaY = (mouseY - win->height/2);
-	if (mouseDeltaX || mouseDeltaY)
-		Rotate(mouseDeltaY*1.2*dt, mouseDeltaX*1.2*dt);
+	double oldMouseX, oldMouseY;
+	glfwGetCursorPos(wind->win, &oldMouseX, &oldMouseY);
+	int mouseDeltaX = (oldMouseX - wind->width/2);
+	int mouseDeltaY = (oldMouseY - wind->height/2);
+	if (oldMouseX && oldMouseY && (mouseDeltaX || mouseDeltaY))
+		Rotate((double)mouseDeltaY*1.2*dt, (double)mouseDeltaX*1.2*dt);
+	glfwSetCursorPos(wind->win, wind->width/2, wind->height/2);
 }
 

@@ -11,8 +11,7 @@ public:
 	glm::vec3 position;
 	double pitch, yaw;
 
-	Camera(Window *win);
-	void Update(Window *win, double dt);
+	void Update(Window *wind, double dt);
 	void MoveForward(double dist);
 	void Strafe(double dist);
 	void Rotate(double byPitch, double byYaw);

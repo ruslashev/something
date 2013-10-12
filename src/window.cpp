@@ -7,7 +7,7 @@ Window::Window(int newWidth, int newHeight, const char *title)
 {
 	printf("Initializing GLFW\t\t\t\t");
 	if (!glfwInit())
-		printf(FAIL_STR);
+		printf(FAIL_STR "\n");
 
 	printf(SUCCESS_STR " v%d.%d.%d\n", GLFW_VERSION_MAJOR, GLFW_VERSION_MINOR,
 			GLFW_VERSION_REVISION);
@@ -20,7 +20,7 @@ Window::Window(int newWidth, int newHeight, const char *title)
 	printf("Creating a window\t\t\t\t");
 	win = glfwCreateWindow(newWidth, newHeight, title, NULL, NULL);
 	if (!win)
-		printf(FAIL_STR);
+		printf(FAIL_STR "\n");
 
 	printf(SUCCESS_STR "\n");
 
