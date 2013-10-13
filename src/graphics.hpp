@@ -32,7 +32,7 @@ public:
 };
 
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements);
-GLuint LoadShader(GLenum type, const char *src);
+GLuint CreateShader(GLenum type, const char *src);
 GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader);
 GLint BindAttribute(const char *name, GLuint &glslProgram);
 GLint BindUniform(const char *name, GLuint &glslProgram);

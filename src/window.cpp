@@ -33,6 +33,11 @@ Window::Window(int newWidth, int newHeight, const char *title)
 	if (err != GLEW_OK)
 		printf(FAIL_STR ": %s\n", glewGetErrorString(err));
 	printf(SUCCESS_STR " v%s\n", glewGetString(GLEW_VERSION));
+
+	printf("GL Vendor: \t%s\n",    glGetString(GL_VENDOR));
+	printf("GL Renderer: \t%s\n",  glGetString(GL_RENDERER));
+	printf("GL Version: \t%s\n",   glGetString(GL_VERSION));
+	printf("GLSL Version: \t%s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 }
 
 void CallbackError(int errorCode, const char *description)

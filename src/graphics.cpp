@@ -100,12 +100,11 @@ void Mesh::Upload()
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER,
 				elements.size()*sizeof(elements[0]),
 				elements.data(), GL_STATIC_DRAW);
-	} else
-		printf("Warning: Uploading empty elements data\n");
+	}
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE,
 			gimp_image.pixel_data);
@@ -123,7 +122,7 @@ void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glUniform1i(textUnif, /*GL_TEXTURE*/0);
+	glUniform1i(textUnif, /*GL_TEXTURE*/0); // TODO
 
 	glEnableVertexAttribArray(attrib_vCoord);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -138,6 +137,7 @@ void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
 
 Mesh::~Mesh()
 {
+	glDeleteBuffers(1, &VBO_tex);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &IBO);
 	glDeleteTextures(1, &textureID);
@@ -173,7 +173,7 @@ bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector
 	return true;
 }
 
-GLuint LoadShader(GLenum type, const char *src)
+GLuint CreateShader(GLenum type, const char *src)
 {
 	printf("Compiling %s shader \t\t\t",
 			type == GL_VERTEX_SHADER ? "vertex" : "fragment");
