@@ -11,22 +11,23 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 #define GLSL(src) "#version 120\n" #src
+		// t attribute vec2 texCoord;
+		// t varying vec2 ftexCoord;
+			// t ftexCoord = texCoord;
 	const char *vertShaderSrc = GLSL(
 		uniform mat4 MVP;
 		attribute vec4 vCoord;
-		attribute vec2 texCoord;
-		varying vec2 ftexCoord;
 		void main() {
-			ftexCoord = texCoord;
 			gl_Position = MVP*vCoord;
 		}
 	);
+		// t uniform sampler2D tex0;
+		// t varying vec2 ftexCoord;
+			// t vec2 inverseCoord = vec2(ftexCoord.x, 1.0-ftexCoord.y);
+			// t gl_FragColor = texture2D(tex0, inverseCoord);
 	const char *fragShaderSrc = GLSL(
-		uniform sampler2D tex0;
-		varying vec2 ftexCoord;
 		void main() {
-			vec2 inverseCoord = vec2(ftexCoord.x, 1.0-ftexCoord.y);
-			gl_FragColor = texture2D(tex0, inverseCoord);
+			gl_FragColor = vec4(0.0, 0.7, 1.0, 1.0);
 		}
 	);
 
@@ -48,20 +49,28 @@ int main()
 		return 2;
 
 	GLint attrib_vCoord = BindAttribute("vCoord", glslProgram);
-	GLint attrib_texCoord = BindAttribute("texCoord", glslProgram);
-	if (attrib_vCoord == -1 || attrib_texCoord == -1)
+	// t GLint attrib_texCoord = BindAttribute("texCoord", glslProgram);
+	if (attrib_vCoord == -1 )// t || attrib_texCoord == -1)
 		return 2;
 
 	GLint uniformMVP = BindUniform("MVP", glslProgram);
 	if (uniformMVP == -1)
 		return 2;
+	// t mapMesh.textUnif = BindUniform("tex0", glslProgram);
+	// t if (mapMesh.textUnif == -1)
+	// t 	return 2;
 
 	// Framebuffer setting up -----------------------------------------------------
+	// TODO glViewport fiddling
 	GLuint FBO, textToRenderTo, RBO;
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &textToRenderTo);
 	glBindTexture(GL_TEXTURE_2D, textToRenderTo);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 800, 600, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenRenderbuffers(1, &RBO);
@@ -91,6 +100,8 @@ int main()
 	const char *vertPPShaderSrc = GLSL(
 		attribute vec2 vCoord;
 		varying vec2 ftexCoord;
+		uniform sampler2D fboText;
+
 		void main() {
 			gl_Position = vec4(vCoord, 0.0, 1.0);
 			ftexCoord = (vCoord + 1.0) / 2.0;
@@ -101,8 +112,8 @@ int main()
 		uniform sampler2D fboText;
 
 		void main(void) {
-			float dx = 5.0*(1./800);
-			float dy = 5.0*(1./600);
+			float dx = 3.0*(1./800);
+			float dy = 3.0*(1./600);
 			vec2 coord = vec2(dx*floor(ftexCoord.x/dx), dy*floor(ftexCoord.y/dy));
 			gl_FragColor = texture2D(fboText, coord);
 		}
@@ -147,6 +158,7 @@ int main()
 				1.0f*window.width/window.height, 0.1f, 50.0f);
 		glm::mat4 MVP = projectionMat * viewMat * modelMat * anim;
 
+		glUseProgram(glslProgram);
 		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(MVP));
 
 		// Draw -------------------------------------------------------
@@ -154,11 +166,14 @@ int main()
 			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 			// Draw to Framebuffer
 
+			// glActiveTexture(GL_TEXTURE1);
+
 			glClearColor(1, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(glslProgram);
-			mapMesh.Draw(attrib_vCoord, attrib_texCoord);
+			mapMesh.Draw(attrib_vCoord);// t attrib_texCoord);
+			// glActiveTexture(GL_TEXTURE1);
 
 			// That was too easy not to do ----------
 			GLfloat gridSize = 11.0f;
@@ -174,13 +189,14 @@ int main()
 			// --------------------------------------
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			// glActiveTexture(GL_TEXTURE1);
 
 			glClearColor(0.0, 0.0, 0.0, 1.0); // TODO
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(ppProg);
 			glBindTexture(GL_TEXTURE_2D, textToRenderTo);
-			glUniform1i(uniformFBOtext, GL_TEXTURE1);
+			glUniform1i(uniformFBOtext, GL_TEXTURE0); // XXX
 			glEnableVertexAttribArray(attrib_vCoordPP);
 
 			glBindBuffer(GL_ARRAY_BUFFER, VBO_for_FBO);

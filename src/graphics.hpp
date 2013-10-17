@@ -16,10 +16,11 @@ class Mesh
 {
 private:
 	GLuint VBO, IBO, VBO_tex, textureID;
-	GLint textUnif;
 public:
 	Mesh() : VBO(0), IBO(0) {};
 	~Mesh();
+
+	GLint textUnif;
 
 	std::vector<glm::vec4> vertices;
 	std::vector<GLushort> elements;
@@ -28,7 +29,7 @@ public:
 	void FromOBJ(const char *filename);
 	void FromVXL(const char *filename);
 	void Upload();
-	void Draw(GLint &attrib_vCoord, GLint &attrib_texCoord);
+	void Draw(GLint &attrib_vCoord);//, GLint &attrib_texCoord);
 };
 
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements);
