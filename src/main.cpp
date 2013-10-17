@@ -9,25 +9,26 @@ int main()
 {
 	Window window(800, 600, "Something");
 	glEnable(GL_DEPTH_TEST);
+	glLineWidth(2);
 
 #define GLSL(src) "#version 120\n" #src
-		// t attribute vec2 texCoord;
-		// t varying vec2 ftexCoord;
-			// t ftexCoord = texCoord;
 	const char *vertShaderSrc = GLSL(
 		uniform mat4 MVP;
 		attribute vec4 vCoord;
+		attribute vec2 texCoord;
+		varying vec2 ftexCoord;
+
 		void main() {
+			ftexCoord = texCoord;
 			gl_Position = MVP*vCoord;
 		}
 	);
-		// t uniform sampler2D tex0;
-		// t varying vec2 ftexCoord;
-			// t vec2 inverseCoord = vec2(ftexCoord.x, 1.0-ftexCoord.y);
-			// t gl_FragColor = texture2D(tex0, inverseCoord);
 	const char *fragShaderSrc = GLSL(
+		uniform sampler2D tex0;
+		varying vec2 ftexCoord;
 		void main() {
-			gl_FragColor = vec4(0.0, 0.7, 1.0, 1.0);
+			vec2 inverseCoord = vec2(ftexCoord.x, 1.0-ftexCoord.y);
+			gl_FragColor = texture2D(tex0, inverseCoord);
 		}
 	);
 
@@ -49,19 +50,18 @@ int main()
 		return 2;
 
 	GLint attrib_vCoord = BindAttribute("vCoord", glslProgram);
-	// t GLint attrib_texCoord = BindAttribute("texCoord", glslProgram);
-	if (attrib_vCoord == -1 )// t || attrib_texCoord == -1)
+	GLint attrib_texCoord = BindAttribute("texCoord", glslProgram);
+	if (attrib_vCoord == -1 || attrib_texCoord == -1)
 		return 2;
 
 	GLint uniformMVP = BindUniform("MVP", glslProgram);
 	if (uniformMVP == -1)
 		return 2;
-	// t mapMesh.textUnif = BindUniform("tex0", glslProgram);
-	// t if (mapMesh.textUnif == -1)
-	// t 	return 2;
+	mapMesh.textUnif = BindUniform("tex0", glslProgram);
+	if (mapMesh.textUnif == -1)
+		return 2;
 
 	// Framebuffer setting up -----------------------------------------------------
-	// TODO glViewport fiddling
 	GLuint FBO, textToRenderTo, RBO;
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &textToRenderTo);
@@ -112,8 +112,8 @@ int main()
 		uniform sampler2D fboText;
 
 		void main(void) {
-			float dx = 3.0*(1./800);
-			float dy = 3.0*(1./600);
+			float dx = 2.0*(1./800);
+			float dy = 2.0*(1./600);
 			vec2 coord = vec2(dx*floor(ftexCoord.x/dx), dy*floor(ftexCoord.y/dy));
 			gl_FragColor = texture2D(fboText, coord);
 		}
@@ -145,11 +145,13 @@ int main()
 		glm::mat4 anim;
 
 		while (simulationTime < realTime) {
-			// Update(time, dt)
 			simulationTime += 0.0016;
-			anim = glm::mat4(1);
-			//glm::rotate(glm::mat4(1), (float)simulationTime*45, glm::vec3(0, 1, 0));
-			cam.Update(&window, 0.0016);
+			// Update(time, dt)
+			{
+				anim = glm::mat4(1);
+				//glm::rotate(glm::mat4(1), (float)simulationTime*45, glm::vec3(0, 1, 0));
+				cam.Update(&window, 0.0016);
+			}
 		}
 
 		glm::mat4 modelMat = glm::mat4(1);//glm::translate(glm::mat4(1), glm::vec3(0, 0, -4));
@@ -166,14 +168,10 @@ int main()
 			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 			// Draw to Framebuffer
 
-			// glActiveTexture(GL_TEXTURE1);
-
 			glClearColor(1, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glUseProgram(glslProgram);
-			mapMesh.Draw(attrib_vCoord);// t attrib_texCoord);
-			// glActiveTexture(GL_TEXTURE1);
+			mapMesh.Draw(attrib_vCoord, attrib_texCoord);
 
 			// That was too easy not to do ----------
 			GLfloat gridSize = 11.0f;
@@ -189,19 +187,18 @@ int main()
 			// --------------------------------------
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			// glActiveTexture(GL_TEXTURE1);
 
-			glClearColor(0.0, 0.0, 0.0, 1.0); // TODO
+			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glUseProgram(ppProg);
 			glBindTexture(GL_TEXTURE_2D, textToRenderTo);
-			glUniform1i(uniformFBOtext, GL_TEXTURE0); // XXX
+			glUniform1i(uniformFBOtext, GL_TEXTURE0);
 			glEnableVertexAttribArray(attrib_vCoordPP);
 
 			glBindBuffer(GL_ARRAY_BUFFER, VBO_for_FBO);
 			glVertexAttribPointer(attrib_vCoordPP, 2, GL_FLOAT, GL_FALSE, 0, 0);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); // TODO
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			glDisableVertexAttribArray(attrib_vCoordPP);
 		}
 

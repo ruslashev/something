@@ -29,7 +29,7 @@ public:
 	void FromOBJ(const char *filename);
 	void FromVXL(const char *filename);
 	void Upload();
-	void Draw(GLint &attrib_vCoord);//, GLint &attrib_texCoord);
+	void Draw(GLint &attrib_vCoord, GLint &attrib_texCoord);
 };
 
 bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements);
