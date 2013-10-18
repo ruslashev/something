@@ -7,26 +7,49 @@
 #define SUCCESS_STR "\x1b[32m" "✓" CLEAR_COLOR
 #define FAIL_STR    "\x1b[31m" "✗" CLEAR_COLOR
 
-void Mesh::FromOBJ(const char *filename)
+bool Mesh::FromOBJ(const char *filename)
 {
-	// TODO
-	if (!loadOBJ(filename, vertices, elements))
-		exit(2);
+	printf("Loading OBJ model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
+
+	std::ifstream ifs(filename, std::ifstream::in);
+	if (!ifs) {
+		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
+		return false;
+	}
+
+	std::string line;
+	while (getline(ifs, line)) {
+		if (line.substr(0, 2) == "v ") {
+			std::istringstream s(line.substr(2));
+			glm::vec4 v;
+			s >> v.x; s >> v.y; s >> v.z; v.w = 1.0f;
+			vertices.push_back(v);
+		} else if (line.substr(0, 2) == "f ") {
+			std::istringstream s(line.substr(2));
+			GLushort a, b, c;
+			s >> a; s >> b; s >> c;
+			a--; b--; c--;
+			elements.push_back(a); elements.push_back(b); elements.push_back(c);
+		}
+	}
+
+	puts(SUCCESS_STR);
+	return true;
 }
 
-void Mesh::FromVXL(const char *filename)
+bool Mesh::FromVXL(const char *filename)
 {
 	printf("Loading VXL model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
 
 	std::ifstream ifs(filename, std::ifstream::in);
 	if (!ifs) {
 		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
-		exit(2);
+		return false;
 	}
 
 	std::string line;
 	while (getline(ifs, line)) {
-		if (line.substr(0,2) == "v ") {
+		if (line.substr(0, 2) == "v ") {
 			std::istringstream s(line.substr(2));
 			int x, y, z;
 			s >> x; s >> y; s >> z;
@@ -77,10 +100,11 @@ void Mesh::FromVXL(const char *filename)
 				texCoords.push_back(glm::vec2(1, 1));
 				texCoords.push_back(glm::vec2(1, 0));
 			}
-		} else { /* ignoring this line */ }
+		}
 	}
 
-	printf(SUCCESS_STR "\n");
+	puts(SUCCESS_STR);
+	return true;
 }
 
 void Mesh::Upload()
@@ -92,7 +116,7 @@ void Mesh::Upload()
 				vertices.size()*sizeof(vertices[0]),
 				vertices.data(), GL_STATIC_DRAW);
 	} else
-		printf("Warning: Uploading empty vertex data\n");
+		puts("Warning: Uploading empty vertex data");
 
 	if (elements.size() > 0) {
 		glGenBuffers(1, &IBO);
@@ -116,7 +140,7 @@ void Mesh::Upload()
 				texCoords.size()*sizeof(texCoords[0]),
 				texCoords.data(), GL_STATIC_DRAW);
 	} else
-		printf("Warning: Uploading empty texCoords data\n");
+		puts("Warning: Uploading empty texture coords");
 }
 
 void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
@@ -131,9 +155,12 @@ void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
 	glEnableVertexAttribArray(attrib_texCoord);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_tex);
 	glVertexAttribPointer(attrib_texCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	// glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	if (elements.size() > 0)
+		glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_SHORT, 0);
+	else
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	glDisableVertexAttribArray(attrib_vCoord);
+	glDisableVertexAttribArray(attrib_texCoord);
 }
 
 Mesh::~Mesh()
@@ -142,36 +169,6 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &IBO);
 	glDeleteTextures(1, &textureID);
-}
-
-bool loadOBJ(const char* filename, std::vector<glm::vec4> &vertices, std::vector<GLushort> &elements)
-{
-	printf("Loading OBJ model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
-
-	std::ifstream ifs(filename, std::ifstream::in);
-	if (!ifs) {
-		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
-		return false;
-	}
-
-	std::string line;
-	while (getline(ifs, line)) {
-		if (line.substr(0,2) == "v ") {
-			std::istringstream s(line.substr(2));
-			glm::vec4 v;
-			s >> v.x; s >> v.y; s >> v.z; v.w = 1.0f;
-			vertices.push_back(v);
-		} else if (line.substr(0,2) == "f ") {
-			std::istringstream s(line.substr(2));
-			GLushort a,b,c;
-			s >> a; s >> b; s >> c;
-			a--; b--; c--;
-			elements.push_back(a); elements.push_back(b); elements.push_back(c);
-		} else { /* ignoring this line */ }
-	}
-
-	printf(SUCCESS_STR "\n");
-	return true;
 }
 
 GLuint CreateShader(GLenum type, const char *src)
@@ -186,12 +183,12 @@ GLuint CreateShader(GLenum type, const char *src)
 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileSuccess);
 	if (!compileSuccess) {
-		printf(FAIL_STR "\n");
+		puts(FAIL_STR);
 		printLog(shader);
 		return 0;
 	}
 
-	printf(SUCCESS_STR "\n");
+	puts(SUCCESS_STR);
 	return shader;
 }
 
@@ -209,7 +206,7 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 
 	glGetProgramiv(glslProgram, GL_LINK_STATUS, &linkSuccess);
 	if (!linkSuccess) {
-		printf(FAIL_STR "\n");
+		puts(FAIL_STR);
 		printLog(glslProgram);
 		return 0;
 	}
@@ -220,12 +217,12 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 	glValidateProgram(glslProgram);
 	glGetProgramiv(glslProgram, GL_VALIDATE_STATUS, &validateSuccess);
 	if (!validateSuccess) {
-		printf(FAIL_STR "\n");
+		puts(FAIL_STR);
 		printLog(glslProgram);
 		return 0;
 	}
 
-	printf(SUCCESS_STR "\n");
+	puts(SUCCESS_STR);
 	return glslProgram;
 }
 
@@ -234,10 +231,10 @@ GLint BindAttribute(const char *name, GLuint &glslProgram)
 	printf("Binding attribute %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
 	GLint attribute = glGetAttribLocation(glslProgram, name);
 	if (attribute == -1) {
-		printf(FAIL_STR "\n");
+		puts(FAIL_STR);
 		return -1;
 	}
-	printf(SUCCESS_STR "\n");
+	puts(SUCCESS_STR);
 	return attribute;
 }
 
@@ -246,10 +243,10 @@ GLint BindUniform(const char *name, GLuint &glslProgram)
 	printf("Binding uniform %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
 	GLint uniform = glGetUniformLocation(glslProgram, name);
 	if (uniform  == -1) {
-		printf(FAIL_STR "\n");
+		puts(FAIL_STR);
 		return -1;
 	}
-	printf(SUCCESS_STR "\n");
+	puts(SUCCESS_STR);
 	return uniform;
 }
 
@@ -264,7 +261,7 @@ void printLog(GLuint &shaderOrProg)
 
 	char *log = new (std::nothrow) char[logLength];
 	if (!log) {
-		printf("Failed to allocate memory for error log.\n");
+		puts("Failed to allocate memory for error log.");
 		return;
 	}
 

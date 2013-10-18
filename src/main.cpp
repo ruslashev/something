@@ -36,6 +36,10 @@ int main()
 	mapMesh.FromVXL("level.vxl");
 	mapMesh.Upload();
 
+	Mesh bat;
+	bat.FromOBJ("bat.obj");
+	bat.Upload();
+
 	Camera cam;
 	cam.position = glm::vec3(-10, 0, 0);
 	cam.pitch = cam.yaw = 0;
@@ -172,6 +176,7 @@ int main()
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			mapMesh.Draw(attrib_vCoord, attrib_texCoord);
+			// bat.Draw(attrib_vCoord, attrib_texCoord);
 
 			// That was too easy not to do ----------
 			GLfloat gridSize = 11.0f;
