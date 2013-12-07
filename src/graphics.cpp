@@ -53,6 +53,7 @@ bool Mesh::FromVXL(const char *filename)
 			std::istringstream s(line.substr(2));
 			int x, y, z;
 			s >> x; s >> y; s >> z;
+
 			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
 			vertices.push_back(glm::vec4(x  , y  , z  , 1));
 			vertices.push_back(glm::vec4(x+1, y  , z  , 1));

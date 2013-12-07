@@ -1,12 +1,12 @@
 CXX = clang++
-OBJS = src/main.o src/framebufferer.o src/camera.o src/graphics.o src/window.o
-EXECNAME = something
-LIBS = -lglfw -lGL -lGLEW
+OBJS = main.o
+EXECNAME = level_editor
+LIBS = -lncurses
 
 all: $(EXECNAME)
 	./$(EXECNAME)
 
-objs/%.o: src/%.cpp
+objs/%.o: %.cpp
 	$(CXX) -c -o $@ $< -Wall -g -std=c++0x
 
 $(EXECNAME): $(OBJS)
