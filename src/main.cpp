@@ -70,27 +70,22 @@ int main()
 	Framebufferer fbm;
 
 	double realTime, simulationTime = 0;
+	const glm::mat4 projectionMat = glm::perspective(
+			60.f, (float)window.width/window.height, 0.1f, 50.0f);
 	while (!glfwWindowShouldClose(window.win))
 	{
 		realTime = glfwGetTime();
-
-		glm::mat4 anim;
 
 		while (simulationTime < realTime) {
 			simulationTime += 0.0016;
 			// Update(time, dt)
 			{
-				anim = glm::mat4(1);
-				//glm::rotate(glm::mat4(1), (float)simulationTime*45, glm::vec3(0, 1, 0));
 				cam.Update(&window, 0.0016);
 			}
 		}
 
-		glm::mat4 modelMat = glm::mat4(1);//glm::translate(glm::mat4(1), glm::vec3(0, 0, -4));
-		glm::mat4 viewMat = cam.LookAtMat();
-		const glm::mat4 projectionMat = glm::perspective(60.f,
-				1.0f*window.width/window.height, 0.1f, 50.0f);
-		glm::mat4 MVP = projectionMat * viewMat * modelMat * anim;
+		const glm::mat4 viewMat = cam.LookAtMat();
+		const glm::mat4 MVP = projectionMat * viewMat;
 
 		glUseProgram(glslProgram);
 		glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, glm::value_ptr(MVP));
@@ -137,9 +132,7 @@ int main()
 
 		glfwSwapBuffers(window.win);
 		glfwPollEvents();
-
 		// double frameTime = glfwGetTime() - realTime;
-		// // glfwSetWindowTitle(window.win, )
 		// printf("%.7f\n", frameTime);
 	}
 

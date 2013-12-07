@@ -54,10 +54,11 @@ void Camera::Update(Window *wind, double dt)
 
 	double oldMouseX, oldMouseY;
 	glfwGetCursorPos(wind->win, &oldMouseX, &oldMouseY);
-	int mouseDeltaX = (oldMouseX - wind->width/2);
-	int mouseDeltaY = (oldMouseY - wind->height/2);
-	if (oldMouseX && oldMouseY && (mouseDeltaX || mouseDeltaY))
+	const int mouseDeltaX = (oldMouseX - wind->width/2);
+	const int mouseDeltaY = (oldMouseY - wind->height/2);
+	if (oldMouseX && oldMouseY && (mouseDeltaX || mouseDeltaY)) {
 		Rotate((double)mouseDeltaY*1.2*dt, (double)mouseDeltaX*1.2*dt);
-	glfwSetCursorPos(wind->win, wind->width/2, wind->height/2);
+		glfwSetCursorPos(wind->win, wind->width/2, wind->height/2);
+	}
 }
 

@@ -34,10 +34,10 @@ Window::Window(int newWidth, int newHeight, const char *title)
 		printf(FAIL_STR ": %s\n", glewGetErrorString(err));
 	printf(SUCCESS_STR " v%s\n", glewGetString(GLEW_VERSION));
 
-	printf("GL Vendor: \t%s\n",    glGetString(GL_VENDOR));
-	printf("GL Renderer: \t%s\n",  glGetString(GL_RENDERER));
-	printf("GL Version: \t%s\n",   glGetString(GL_VERSION));
-	printf("GLSL Version: \t%s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	printf("GL Vendor:    %s\n", glGetString(GL_VENDOR));
+	printf("GL Renderer:  %s\n", glGetString(GL_RENDERER));
+	printf("GL Version:   %s\n", glGetString(GL_VERSION));
+	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 }
 
 void CallbackError(int errorCode, const char *description)
