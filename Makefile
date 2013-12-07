@@ -1,16 +1,16 @@
 CXX = clang++
-OBJS = src/main.o src/framebufferer.o src/camera.o src/graphics.o src/window.o
+OBJS = objs/main.o objs/framebufferer.o objs/camera.o objs/graphics.o objs/window.o
 EXECNAME = something
 LIBS = -lglfw -lGL -lGLEW
 
 all: $(EXECNAME)
 	./$(EXECNAME)
 
-objs/%.o: src/%.cpp
-	$(CXX) -c -o $@ $< -Wall -g -std=c++0x
-
 $(EXECNAME): $(OBJS)
 	$(CXX) -o $@ $^ $(LIBS)
+
+objs/%.o: src/%.cpp
+	$(CXX) -c -o $@ $< -Wall -g -std=c++0x
 
 clean:
 	-rm -f objs/*.o $(EXECNAME)

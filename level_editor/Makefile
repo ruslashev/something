@@ -1,5 +1,5 @@
 CXX = clang++
-OBJS = main.o
+OBJS = objs/main.o
 EXECNAME = level_editor
 LIBS = -lncurses
 
