@@ -51,9 +51,14 @@ getChoice:
 	return 0;
 }
 
+// TODO:
+// Filling
+// Undo
+
 void newMap()
 {
 	clear();
+	curs_set(0);
 
 	const struct { int w, h, d; } mapSize = { 10, 5, 10 }; // add asking
 	int level = 0;
@@ -62,7 +67,7 @@ void newMap()
 	for (int z = 0; z < mapSize.d; z++) {
 		for (int y = 0; y < mapSize.h; y++) {
 			for (int x = 0; x < mapSize.w; x++) {
-				map[z][y][x] = 1;
+				map[z][y][x] = 0;
 			}
 		}
 	}
@@ -71,8 +76,22 @@ void newMap()
 	box(mapw, 0, 0);
 	struct { int x, y; } cursor = { 0, 0 };
 
+	const int helpTextXof = 30, helpTextYof = 2, helpTextSize = 7;
+	const char helpText[helpTextSize][35] = {
+		"Keys:                             ",
+		"arrow keys - move in current depth",
+		"j/k        - up/down depth level  ",
+		"space/t    - toggle tile          ",
+		"z          - set                  ",
+		"x          - erase                ",
+		"q          - quit                 "
+	};
+	for (int i = 0; i < helpTextSize; i++)
+		mvaddstr(helpTextYof+i, helpTextXof, helpText[i]);
+
 	while (input != 'q') {
-		mvprintw(0, 0, "Depth level: %d", level);
+		mvprintw(0, 0, "Depth level: %d", level, cursor.x, cursor.y);
+
 		for (int z = 0; z < mapSize.d; z++) {
 			mvwprintw(mapw, z+1, 0, "%-2d", z);
 			for (int x = 0; x < mapSize.w; x++) {
@@ -84,7 +103,12 @@ void newMap()
 		for (int x = 0; x < mapSize.w; x++)
 			mvwprintw(mapw, 0, x*2+2, "%-2d", x);
 
+		int onAfilledTile = map[cursor.y][level][cursor.x];
+		if (onAfilledTile)
+			wattron(mapw, A_REVERSE);
 		mvwaddstr(mapw, cursor.y+1, cursor.x*2+2, "##");
+		if (onAfilledTile)
+			wattroff(mapw, A_REVERSE);
 		move(yof-1, 1);
 		clrtoeol();
 		mvaddstr(yof-1, cursor.x*2+xof+2, "vv");
@@ -97,6 +121,7 @@ void newMap()
 		input = getch();
 
 		switch (input) {
+			// Moving =====================================================
 			case KEY_LEFT:
 				if (cursor.x > 0)
 					cursor.x--;
@@ -113,11 +138,31 @@ void newMap()
 				if (cursor.y < mapSize.d-1)
 					cursor.y++;
 				break;
+			case 'j':
+				if (level > 0)
+					level--;
+				break;
+			case 'k':
+				if (level < 100) // sanity
+					level++;
+				break;
+			// Modifying ==================================================
+			case 32: // space
+			case 't':
+				map[cursor.y][level][cursor.x] = !map[cursor.y][level][cursor.x];
+				break;
+			case 'z':
+				map[cursor.y][level][cursor.x] = 1;
+				break;
+			case 'x':
+				map[cursor.y][level][cursor.x] = 0;
+				break;
 			default:
 				break;
 		}
 	}
 
 	delwin(mapw);
+	curs_set(1);
 }
 
