@@ -66,28 +66,31 @@ void newMap()
 			}
 		}
 	}
-	WINDOW *mapw = newwin(mapSize.d+2, mapSize.w*2+2+1, 1, 0);
+	const int xof = 1, yof = 2;
+	WINDOW *mapw = newwin(mapSize.d+2, mapSize.w*2+2+1, yof, xof);
 	box(mapw, 0, 0);
 	struct { int x, y; } cursor = { 0, 0 };
 
 	while (input != 'q') {
-		mvprintw(0, 0, "Depth: %d", level);
-
+		mvprintw(0, 0, "Depth level: %d", level);
 		for (int z = 0; z < mapSize.d; z++) {
 			mvwprintw(mapw, z+1, 0, "%-2d", z);
 			for (int x = 0; x < mapSize.w; x++) {
-				int xof = 2, yof = 1;
 				int tile = map[z][level][x];
-				mvwaddch(mapw, yof+z, xof+x*2,   tile ? ACS_BLOCK : ' ');
-				mvwaddch(mapw, yof+z, xof+x*2+1, tile ? ACS_BLOCK : ' ');
+				mvwaddch(mapw, z+1, x*2+2,   tile ? ACS_BLOCK : ' ');
+				mvwaddch(mapw, z+1, x*2+2+1, tile ? ACS_BLOCK : ' ');
 			}
 		}
 		for (int x = 0; x < mapSize.w; x++)
 			mvwprintw(mapw, 0, x*2+2, "%-2d", x);
 
-		mvwaddch(mapw, cursor.y+1, cursor.x*2+2, '#');
-		mvwaddch(mapw, cursor.y+1, cursor.x*2+2+1, '#');
-		wmove(mapw, 11, 0);
+		mvwaddstr(mapw, cursor.y+1, cursor.x*2+2, "##");
+		move(yof-1, 1);
+		clrtoeol();
+		mvaddstr(yof-1, cursor.x*2+xof+2, "vv");
+		for (int z = 0; z < mapSize.d; z++)
+			mvaddch(yof+z+1, xof-1, ' ');
+		mvaddch(cursor.y+yof+1, xof-1, '>');
 
 		refresh();
 		wrefresh(mapw);
@@ -95,16 +98,20 @@ void newMap()
 
 		switch (input) {
 			case KEY_LEFT:
-				cursor.x--;
+				if (cursor.x > 0)
+					cursor.x--;
 				break;
 			case KEY_RIGHT:
-				cursor.x++;
+				if (cursor.x < mapSize.w-1)
+					cursor.x++;
 				break;
 			case KEY_UP:
-				cursor.y--;
+				if (cursor.y > 0)
+					cursor.y--;
 				break;
 			case KEY_DOWN:
-				cursor.y++;
+				if (cursor.y < mapSize.d-1)
+					cursor.y++;
 				break;
 			default:
 				break;
