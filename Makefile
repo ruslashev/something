@@ -1,5 +1,5 @@
 CXX = clang++
-OBJS = objs/main.o objs/framebufferer.o objs/interaction.o objs/graphics.o objs/window.o
+OBJS = objs/framebufferer.o objs/graphics.o objs/interaction.o objs/main.o objs/voxelworld.o objs/window.o
 EXECNAME = something
 LIBS = -lglfw -lGL -lGLEW
 

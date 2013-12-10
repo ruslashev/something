@@ -3,6 +3,7 @@
 #include "window.hpp"
 #include "interaction.hpp"
 #include "framebufferer.hpp"
+#include "voxelworld.hpp"
 
 using namespace std;
 
@@ -34,8 +35,9 @@ int main()
 	);
 #undef GLSL
 
-	Mesh mapMesh;
-	mapMesh.FromVXL("level.vxl");
+	VoxelWorld vw;
+	vw.fromFile("level.vxl");
+	Mesh mapMesh = vw.voxelMesh;
 	mapMesh.Upload();
 
 	Mesh bat;
@@ -43,7 +45,7 @@ int main()
 	bat.Upload();
 
 	Player ply(&window);
-	ply.pos = glm::vec3(-10, 0, 0);
+	ply.pos = glm::vec3(-10, 1, 0);
 	ply.pitch = ply.yaw = 0;
 
 	GLuint vertShader = CreateShader(GL_VERTEX_SHADER, vertShaderSrc);

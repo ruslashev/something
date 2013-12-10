@@ -8,9 +8,16 @@ Player::Player(Window *wind)
 
 void Player::MoveForward(double dist)
 {
+	pos += glm::vec3(cos(yaw)*dist,
+					 0,
+					 sin(yaw)*dist);
+}
+
+void Player::Fly(double dist)
+{
 	pos += glm::vec3(cos(yaw)*cos(pitch)*dist,
-			sin(pitch)*dist,
-			sin(yaw)*cos(pitch)*dist);
+					 sin(pitch)*dist,
+					 sin(yaw)*cos(pitch)*dist);
 }
 
 void Player::Strafe(double dist)

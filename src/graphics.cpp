@@ -13,7 +13,7 @@ bool Mesh::FromOBJ(const char *filename)
 
 	std::ifstream ifs(filename, std::ifstream::in);
 	if (!ifs) {
-		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
+		printf(FAIL_STR " fail: %d bad: %d\n", ifs.fail(), ifs.bad());
 		return false;
 	}
 
@@ -30,77 +30,6 @@ bool Mesh::FromOBJ(const char *filename)
 			s >> a; s >> b; s >> c;
 			a--; b--; c--;
 			elements.push_back(a); elements.push_back(b); elements.push_back(c);
-		}
-	}
-
-	puts(SUCCESS_STR);
-	return true;
-}
-
-bool Mesh::FromVXL(const char *filename)
-{
-	printf("Loading VXL model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
-
-	std::ifstream ifs(filename, std::ifstream::in);
-	if (!ifs) {
-		printf(FAIL_STR " failbit: %d badbit: %d\n", ifs.fail(), ifs.bad());
-		return false;
-	}
-
-	std::string line;
-	while (getline(ifs, line)) {
-		if (line.substr(0, 2) == "v ") {
-			std::istringstream s(line.substr(2));
-			int x, y, z;
-			s >> x; s >> y; s >> z;
-
-			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
-			vertices.push_back(glm::vec4(x  , y  , z  , 1));
-			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
-			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
-			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
-			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
-			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
-
-			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
-			vertices.push_back(glm::vec4(x  , y  , z  , 1));
-			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
-			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
-			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
-			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
-			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
-
-			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
-			vertices.push_back(glm::vec4(x  , y  , z  , 1));
-			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
-			vertices.push_back(glm::vec4(x  , y  , z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y  , z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y  , z  , 1));
-			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x  , y+1, z  , 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
-			vertices.push_back(glm::vec4(x  , y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z+1, 1));
-			vertices.push_back(glm::vec4(x+1, y+1, z  , 1));
-
-			for (int i = 1; i <= 6; i++) {
-				texCoords.push_back(glm::vec2(0, 1));
-				texCoords.push_back(glm::vec2(0, 0));
-				texCoords.push_back(glm::vec2(1, 0));
-				texCoords.push_back(glm::vec2(0, 1));
-				texCoords.push_back(glm::vec2(1, 1));
-				texCoords.push_back(glm::vec2(1, 0));
-			}
 		}
 	}
 

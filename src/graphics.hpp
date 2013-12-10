@@ -27,7 +27,6 @@ public:
 	std::vector<glm::vec2> texCoords;
 
 	bool FromOBJ(const char *filename);
-	bool FromVXL(const char *filename);
 	void Upload();
 	void Draw(GLint &attrib_vCoord, GLint &attrib_texCoord);
 };
