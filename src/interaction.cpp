@@ -31,10 +31,11 @@ void Player::Rotate(double byPitch, double byYaw)
 	pitch -= byPitch;
 	yaw += byYaw;
 
-	if (pitch >= M_PI_2-0.001)
-		pitch = M_PI_2-0.001;
-	if (pitch <= -M_PI_2+0.001)
-		pitch = -M_PI_2+0.001;
+	const double precision = 0.0001;
+	if (pitch >= M_PI_2-precision)
+		pitch = M_PI_2-precision;
+	if (pitch <= -M_PI_2+precision)
+		pitch = -M_PI_2+precision;
 	if (yaw >= 2*M_PI || yaw <= -2*M_PI)
 		yaw = 0;
 }

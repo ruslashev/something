@@ -6,7 +6,9 @@
 
 #include "graphics.hpp"
 
-struct AABB { int x, y, z; unsigned int w, h, d; };
+struct AABB { int x, y, z; double w, h, d; };
+
+bool aabbsCollide(AABB a, AABB b);
 
 class VoxelWorld
 {

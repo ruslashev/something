@@ -74,15 +74,21 @@ int main()
 	double realTime, simulationTime = 0;
 	const glm::mat4 projectionMat = glm::perspective(
 			60.f, (float)window.width/window.height, 0.1f, 50.0f);
-	while (!glfwWindowShouldClose(window.win))
-	{
+	while (!glfwWindowShouldClose(window.win)) {
 		realTime = glfwGetTime();
 
 		while (simulationTime < realTime) {
 			simulationTime += 0.0016;
 			// Update(time, dt)
 			{
+				const glm::vec3 oldPos = ply.pos;
 				ply.Update(&window, 0.0016);
+				AABB plyAABB = AABB { (int)ply.pos.x, (int)ply.pos.y, (int)ply.pos.z, 0.5, 1.5, 0.5 };
+				for (AABB &box : vw.voxels)
+					if (aabbsCollide(box, plyAABB)) {
+						ply.pos = oldPos;
+						break;
+					}
 			}
 		}
 

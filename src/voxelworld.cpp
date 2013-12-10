@@ -6,6 +6,16 @@
 #define SUCCESS_STR "\x1b[32m" "✓" CLEAR_COLOR
 #define FAIL_STR    "\x1b[31m" "✗" CLEAR_COLOR
 
+bool aabbsCollide(AABB a, AABB b)
+{
+	return (a.x + a.w >= b.x) &&
+           (b.x + b.w >= a.x) &&
+           (a.y + a.h >= b.y) &&
+           (b.y + b.h >= a.y) &&
+           (a.z + a.d >= b.z) &&
+           (b.z + b.d >= a.z);
+}
+
 void VoxelWorld::fromFile(const char *filename)
 {
 	if (!readVoxels(filename))
@@ -29,7 +39,7 @@ bool VoxelWorld::readVoxels(const char *filename)
 			std::istringstream s(line.substr(2));
 			int x, y, z;
 			s >> x; s >> y; s >> z;
-			voxels.push_back(AABB { x, y, z, 1, 1, 1 });
+			voxels.push_back(AABB { x, y, z, 1., 1., 1. });
 		}
 	}
 
