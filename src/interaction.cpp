@@ -1,20 +1,25 @@
 #include "window.hpp"
-#include "camera.hpp"
+#include "interaction.hpp"
 
-void Camera::MoveForward(double dist)
+Player::Player(Window *wind)
 {
-	position += glm::vec3(cos(yaw)*cos(pitch)*dist,
+	glfwSetCursorPos(wind->win, wind->width/2, wind->height/2);
+}
+
+void Player::MoveForward(double dist)
+{
+	pos += glm::vec3(cos(yaw)*cos(pitch)*dist,
 			sin(pitch)*dist,
 			sin(yaw)*cos(pitch)*dist);
 }
 
-void Camera::Strafe(double dist)
+void Player::Strafe(double dist)
 {
 	const double rotatedYaw = yaw-M_PI_2;
-	position += glm::vec3(cos(rotatedYaw)*dist, 0, sin(rotatedYaw)*dist);
+	pos += glm::vec3(cos(rotatedYaw)*dist, 0, sin(rotatedYaw)*dist);
 }
 
-void Camera::Rotate(double byPitch, double byYaw)
+void Player::Rotate(double byPitch, double byYaw)
 {
 	pitch -= byPitch;
 	yaw += byYaw;
@@ -27,20 +32,20 @@ void Camera::Rotate(double byPitch, double byYaw)
 		yaw = 0;
 }
 
-glm::mat4 Camera::LookAtMat()
+glm::mat4 Player::LookAtMat()
 {
 	return glm::lookAt(
-		position,
+		pos,
 		glm::vec3(
-			position.x+cos(yaw)*cos(pitch),
-			position.y+sin(pitch),
-			position.z+sin(yaw)*cos(pitch)
+			pos.x+cos(yaw)*cos(pitch),
+			pos.y+sin(pitch),
+			pos.z+sin(yaw)*cos(pitch)
 		),
 		glm::vec3(0, 1, 0)
 	);
 }
 
-void Camera::Update(Window *wind, double dt)
+void Player::Update(Window *wind, double dt)
 {
 	if (glfwGetKey(wind->win, 'W'))
 		MoveForward(10*dt);

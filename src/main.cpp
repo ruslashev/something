@@ -1,7 +1,7 @@
 #include "graphics.hpp"
 #include "main.hpp"
 #include "window.hpp"
-#include "camera.hpp"
+#include "interaction.hpp"
 #include "framebufferer.hpp"
 
 using namespace std;
@@ -42,9 +42,9 @@ int main()
 	bat.FromOBJ("bat.obj");
 	bat.Upload();
 
-	Camera cam;
-	cam.position = glm::vec3(-10, 0, 0);
-	cam.pitch = cam.yaw = 0;
+	Player ply(&window);
+	ply.pos = glm::vec3(-10, 0, 0);
+	ply.pitch = ply.yaw = 0;
 
 	GLuint vertShader = CreateShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = CreateShader(GL_FRAGMENT_SHADER, fragShaderSrc);
@@ -80,11 +80,11 @@ int main()
 			simulationTime += 0.0016;
 			// Update(time, dt)
 			{
-				cam.Update(&window, 0.0016);
+				ply.Update(&window, 0.0016);
 			}
 		}
 
-		const glm::mat4 viewMat = cam.LookAtMat();
+		const glm::mat4 viewMat = ply.LookAtMat();
 		const glm::mat4 MVP = projectionMat * viewMat;
 
 		glUseProgram(glslProgram);
