@@ -13,6 +13,19 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glLineWidth(2);
 
+	VoxelWorld vw;
+	vw.fromFile("level.vxl");
+	Mesh mapMesh = vw.voxelMesh;
+	mapMesh.Upload();
+
+	Mesh bat;
+	bat.FromOBJ("bat.obj");
+	bat.Upload();
+
+	Player ply(&window);
+	ply.pos = glm::vec3(-10, 1, 0);
+	ply.pitch = ply.yaw = 0;
+
 #define GLSL(src) "#version 120\n" #src
 	const char *vertShaderSrc = GLSL(
 		uniform mat4 MVP;
@@ -34,19 +47,6 @@ int main()
 		}
 	);
 #undef GLSL
-
-	VoxelWorld vw;
-	vw.fromFile("level.vxl");
-	Mesh mapMesh = vw.voxelMesh;
-	mapMesh.Upload();
-
-	Mesh bat;
-	bat.FromOBJ("bat.obj");
-	bat.Upload();
-
-	Player ply(&window);
-	ply.pos = glm::vec3(-10, 1, 0);
-	ply.pitch = ply.yaw = 0;
 
 	GLuint vertShader = CreateShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = CreateShader(GL_FRAGMENT_SHADER, fragShaderSrc);

@@ -172,7 +172,7 @@ GLint BindUniform(const char *name, GLuint &glslProgram)
 {
 	printf("Binding uniform %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
 	GLint uniform = glGetUniformLocation(glslProgram, name);
-	if (uniform  == -1) {
+	if (uniform == -1) {
 		puts(FAIL_STR);
 		return -1;
 	}
