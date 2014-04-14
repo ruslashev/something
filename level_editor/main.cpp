@@ -3,27 +3,34 @@
 #include <ncurses.h>
 
 void newMap();
+void Start();
 
 int main()
 {
 	initscr();
-	cbreak(); // give us keys w/o pressing return
-	noecho(); // don't echo pressed keys to terminal
-	keypad(stdscr, TRUE); // allow us to use more keys (F1, arrow keys etc.)
+	cbreak();             // give us keys w/o pressing return
+	noecho();             // don't echo pressed keys to terminal
+	keypad(stdscr, TRUE); // allow using more keys (F1, arrow keys etc.)
 
 	newMap();
+
 	endwin();
 	return 0;
 
+	// Start();
+	// return 0;
+}
+
+void Start()
+{
 	mvaddstr(0, 0, "Welcome to Level Editor!");
-	mvaddstr(1, 0, "");
-	mvaddstr(2, 0, "What are we going to do:");
+	mvaddstr(2, 0, "What do you want to do:");
 	mvaddstr(3, 0, "1) Create a [N]ew map");
 	mvaddstr(4, 0, "2) [O]pen existing map to edit it");
 	mvaddstr(5, 0, "3) [E]xit");
-	mvaddstr(6, 0, "");
 	mvaddstr(7, 0, "> ");
 	refresh();
+
 getChoice:
 	echo();
 	char input = getch();
@@ -33,8 +40,6 @@ getChoice:
 			newMap();
 			break;
 		case '2': case 'O': case 'o':
-			mvaddstr(8, 0, "Open file! YAY!");
-			break;
 		case '3': case 'E': case 'e':
 			endwin();
 			exit(0);
@@ -49,50 +54,45 @@ getChoice:
 	}
 
 	endwin();
-	return 0;
 }
-
-// TODO:
-// Filling
-// Undo
 
 void newMap()
 {
 	clear();
 	curs_set(0);
 
-	const struct { int w, h, d; } mapSize = { 10, 5, 10 }; // add asking
 	int level = 0;
 	int input = 'r';
+
+	const struct { int w, h, d; } mapSize = { 10, 5, 10 }; // TODO add asking
 	int map[mapSize.d][mapSize.h][mapSize.w];
-	for (int z = 0; z < mapSize.d; z++) {
-		for (int y = 0; y < mapSize.h; y++) {
-			for (int x = 0; x < mapSize.w; x++) {
+
+	for (int z = 0; z < mapSize.d; z++)
+		for (int y = 0; y < mapSize.h; y++)
+			for (int x = 0; x < mapSize.w; x++)
 				map[z][y][x] = 0;
-			}
-		}
-	}
+
 	const int xof = 1, yof = 2;
 	WINDOW *mapw = newwin(mapSize.d+2, mapSize.w*2+2+1, yof, xof);
 	box(mapw, 0, 0);
 	struct { int x, y; } cursor = { 0, 0 };
 
-	const int helpTextXof = 30, helpTextYof = 2, helpTextSize = 8;
-	const char helpText[helpTextSize][35] = {
-		"Keys:                             ",
-		"arrow keys - move in current depth",
-		"j/k        - up/down depth level  ",
-		"space/t    - toggle tile          ",
-		"z          - set                  ",
-		"x          - erase                ",
-		"e          - export               ",
-		"q          - quit                 "
+	const int helpTextXof = mapSize.w*2+xof+5, helpTextYof = 2, helpTextSize = 8;
+	const char helpText[helpTextSize][50] = {
+		"Keys:",
+		"arrow keys - move in current height",
+		"j/k        - up/down height level",
+		"space/t    - toggle set/unset tile",
+		"z          - set",
+		"x          - erase",
+		"e          - export",
+		"q          - quit"
 	};
 	for (int i = 0; i < helpTextSize; i++)
 		mvaddstr(helpTextYof+i, helpTextXof, helpText[i]);
 
 	while (input != 'q') {
-		mvprintw(0, 0, "Depth level: %d", level, cursor.x, cursor.y);
+		mvprintw(0, 0, "Height level: %d", level, cursor.x, cursor.y);
 
 		for (int z = 0; z < mapSize.d; z++) {
 			mvwprintw(mapw, z+1, 0, "%-2d", z);
@@ -102,6 +102,7 @@ void newMap()
 				mvwaddch(mapw, z+1, x*2+2+1, tile ? ACS_BLOCK : ' ');
 			}
 		}
+
 		for (int x = 0; x < mapSize.w; x++)
 			mvwprintw(mapw, 0, x*2+2, "%-2d", x);
 
@@ -111,6 +112,7 @@ void newMap()
 		mvwaddstr(mapw, cursor.y+1, cursor.x*2+2, "##");
 		if (onAfilledTile)
 			wattroff(mapw, A_REVERSE);
+
 		move(yof-1, 1);
 		clrtoeol();
 		mvaddstr(yof-1, cursor.x*2+xof+2, "vv");
@@ -120,8 +122,8 @@ void newMap()
 
 		refresh();
 		wrefresh(mapw);
-		input = getch();
 
+		input = getch();
 		switch (input) {
 			// Moving =====================================================
 			case KEY_LEFT:
@@ -189,7 +191,7 @@ void newMap()
 				ofs.close();
 				mvaddstr(yof+mapSize.d+3, 0, "Save successful.");
 				break;
-				}
+			}
 			default:
 				break;
 		}
