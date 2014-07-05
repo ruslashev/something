@@ -1,10 +1,4 @@
-# these lines are comments
-# d w h d
-# object dimensions: width w, height h, depth d
-# , on the other hand, there is no need to specify them
-# d 3 3 3
-
-# v x y z
+# v(oxel) x y z
 # voxel at (x,y,z) is not empty
 v 0 1 0
 v 0 2 0
