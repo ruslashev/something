@@ -1,5 +1,5 @@
-#ifndef MAIN_HPP
-#define MAIN_HPP
+#ifndef MAIN_HH
+#define MAIN_HH
 
 #include <string>
 #include <glm/glm.hpp>

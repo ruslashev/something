@@ -1,5 +1,5 @@
-#ifndef FRAMEBUFFERER_HPP
-#define FRAMEBUFFERER_HPP
+#ifndef FRAMEBUFFERER_HH
+#define FRAMEBUFFERER_HH
 
 class Framebufferer
 {

@@ -1,9 +1,9 @@
-#include "graphics.hpp"
-#include "main.hpp"
-#include "window.hpp"
-#include "interaction.hpp"
-#include "framebufferer.hpp"
-#include "voxelworld.hpp"
+#include "graphics.hh"
+#include "main.hh"
+#include "window.hh"
+#include "interaction.hh"
+#include "framebufferer.hh"
+#include "voxelworld.hh"
 
 using namespace std;
 

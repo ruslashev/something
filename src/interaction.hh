@@ -1,5 +1,5 @@
-#ifndef INTERACTION_HPP
-#define INTERACTION_HPP
+#ifndef INTERACTION_HH
+#define INTERACTION_HH
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>

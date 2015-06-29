@@ -1,11 +1,10 @@
-#ifndef GRAPHICS_HPP
-#define GRAPHICS_HPP
+#ifndef GRAPHICS_HH
+#define GRAPHICS_HH
 
 #include <GL/glew.h>
 #include <fstream>
 
 #include <new>
-
 #include <vector>
 #include <glm/glm.hpp>
 #include <string>

@@ -1,5 +1,5 @@
-#include "graphics.hpp"
-#include "image.hpp"
+#include "graphics.hh"
+#include "image.hh"
 
 #define INFO_COLOR  "\x1b[36m"
 #define CLEAR_COLOR "\x1b[0m"

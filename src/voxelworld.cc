@@ -1,4 +1,4 @@
-#include "voxelworld.hpp"
+#include "voxelworld.hh"
 
 #define INFO_COLOR  "\x1b[36m"
 #define CLEAR_COLOR "\x1b[0m"

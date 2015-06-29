@@ -1,5 +1,5 @@
-#include "window.hpp"
-#include "interaction.hpp"
+#include "window.hh"
+#include "interaction.hh"
 
 Player::Player(Window *wind)
 {

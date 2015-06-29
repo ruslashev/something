@@ -1,17 +1,22 @@
-CXX = clang++
-OBJS = objs/framebufferer.o objs/graphics.o objs/interaction.o objs/main.o objs/voxelworld.o objs/window.o
+OBJ = obj/framebufferer.o obj/graphics.o obj/interaction.o obj/main.o \
+	  obj/voxelworld.o obj/window.o
 EXECNAME = something
-LIBS = -lglfw -lGL -lGLEW
+LDFLAGS = -lglfw -lGL -lGLEW
+CXXFLAGS = -Wall -Wextra -g -std=c++0x `freetype-config --cflags`
 
-all: $(EXECNAME)
+default: objdir $(EXECNAME)
 	./$(EXECNAME)
 
-$(EXECNAME): $(OBJS)
-	$(CXX) -o $@ $^ $(LIBS)
+$(EXECNAME): $(OBJ)
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
-objs/%.o: src/%.cpp
-	$(CXX) -c -o $@ $< -Wall -g -std=c++0x
+obj/%.o: src/%.cc
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
+objdir:
+	mkdir -p obj
+
+.PHONY: clean
 clean:
-	-rm -f objs/*.o $(EXECNAME)
+	-rm -f $(OBJ) $(EXECNAME)
 

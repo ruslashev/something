@@ -1,5 +1,5 @@
-#include "graphics.hpp"
-#include "framebufferer.hpp"
+#include "graphics.hh"
+#include "framebufferer.hh"
 
 #define SUCCESS_STR "\x1b[32m" "✓" "\x1b[0m"
 #define FAIL_STR    "\x1b[31m" "✗" "\x1b[0m"

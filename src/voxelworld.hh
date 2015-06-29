@@ -1,10 +1,10 @@
-#ifndef VOXELWORLD_HPP
-#define VOXELWORLD_HPP
+#ifndef VOXELWORLD_HH
+#define VOXELWORLD_HH
 
 #include <iostream>
 #include <sstream>
 
-#include "graphics.hpp"
+#include "graphics.hh"
 
 struct AABB { int x, y, z; double w, h, d; };
 
