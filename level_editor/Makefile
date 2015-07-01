@@ -1,17 +1,6 @@
-CXX = clang++
-OBJS = objs/main.o
-EXECNAME = level_editor
-LIBS = -lncurses
+CXX = g++
 
-all: $(EXECNAME)
-	./$(EXECNAME)
-
-objs/%.o: %.cpp
-	$(CXX) -c -o $@ $< -Wall -g -std=c++0x
-
-$(EXECNAME): $(OBJS)
-	$(CXX) -o $@ $^ $(LIBS)
-
-clean:
-	-rm -f objs/*.o $(EXECNAME)
+all:
+	$(CXX) main.cc -o level_editor -Wall -g -std=c++0x -lncurses
+	./level_editor
 

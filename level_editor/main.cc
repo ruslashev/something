@@ -2,30 +2,27 @@
 #include <cstring>
 #include <ncurses.h>
 
-void newMap();
-void Start();
+void NewMap();
+void StartScreen();
 
 int main()
 {
 	initscr();
-	cbreak();             // give us keys w/o pressing return
+	cbreak();             // give keys w/o pressing return
 	noecho();             // don't echo pressed keys to terminal
 	keypad(stdscr, TRUE); // allow using more keys (F1, arrow keys etc.)
 
-	newMap();
+	StartScreen();
 
 	endwin();
 	return 0;
-
-	// Start();
-	// return 0;
 }
 
 void Start()
 {
 	mvaddstr(0, 0, "Welcome to Level Editor!");
-	mvaddstr(2, 0, "What do you want to do:");
-	mvaddstr(3, 0, "1) Create a [N]ew map");
+	mvaddstr(2, 0, "Type in number or letter:");
+	mvaddstr(3, 0, "1) Create a [N]ew map - not working");
 	mvaddstr(4, 0, "2) [O]pen existing map to edit it");
 	mvaddstr(5, 0, "3) [E]xit");
 	mvaddstr(7, 0, "> ");
@@ -37,12 +34,10 @@ getChoice:
 	noecho();
 	switch (input) {
 		case '1': case 'N': case 'n':
-			newMap();
+			NewMap();
 			break;
 		case '2': case 'O': case 'o':
 		case '3': case 'E': case 'e':
-			endwin();
-			exit(0);
 			break;
 		default:
 			mvaddstr(8, 0, "Unrecognized choice. Try \"1\", \"O\" or \"e\".");
@@ -52,19 +47,17 @@ getChoice:
 			goto getChoice;
 			break;
 	}
-
-	endwin();
 }
 
-void newMap()
+void NewMap()
 {
 	clear();
-	curs_set(0);
+	curs_set(0); // set terminal cursor to invisible
 
 	int level = 0;
 	int input = 'r';
 
-	const struct { int w, h, d; } mapSize = { 10, 5, 10 }; // TODO add asking
+	struct { int w, h, d; } mapSize = { 10, 5, 10 }; // TODO add asking
 	int map[mapSize.d][mapSize.h][mapSize.w];
 
 	for (int z = 0; z < mapSize.d; z++)
@@ -79,7 +72,7 @@ void newMap()
 
 	const int helpTextXof = mapSize.w*2+xof+5, helpTextYof = 2, helpTextSize = 8;
 	const char helpText[helpTextSize][50] = {
-		"Keys:",
+		"Instructions:",
 		"arrow keys - move in current height",
 		"j/k        - up/down height level",
 		"space/t    - toggle set/unset tile",
