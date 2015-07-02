@@ -18,48 +18,31 @@ class ArrayBuffer
 public:
 	GLuint id;
 
-	~ArrayBuffer();
-
-	void Construct(GLenum ntype);
-	void Upload(std::vector<Vec> *data);
-	void Bind() const;
-	void Unbind() const;
+	void Construct(GLenum ntype)
+	{
+		type = ntype;
+		id = 0;
+		glGenBuffers(1, &id);
+	}
+	void Upload(std::vector<Vec> *data)
+	{
+		Bind();
+		glBufferData(type,
+				data->size()*sizeof(data->at(0)),
+				data->data(),
+				GL_STATIC_DRAW);
+		glBindBuffer(type, 0);
+	}
+	void Bind() const
+	{
+		glBindBuffer(type, id);
+	}
+	~ArrayBuffer()
+	{
+		if (id)
+			glDeleteBuffers(1, &id);
+	}
 };
-
-template <class Vec>
-void ArrayBuffer<Vec>::Construct(GLenum ntype)
-{
-	type = ntype;
-	id = 0;
-	glGenBuffers(1, &id);
-}
-template <class Vec>
-ArrayBuffer<Vec>::~ArrayBuffer()
-{
-	if (id)
-		glDeleteBuffers(1, &id);
-}
-template <class Vec>
-void ArrayBuffer<Vec>::Upload(std::vector<Vec> *data)
-{
-	Bind();
-	glBufferData(type,
-			data->size()*sizeof(data->at(0)),
-			data->data(),
-			GL_STATIC_DRAW);
-	Unbind();
-}
-template <class Vec>
-void ArrayBuffer<Vec>::Bind() const
-{
-	glBindBuffer(type, id);
-}
-template <class Vec>
-void ArrayBuffer<Vec>::Unbind() const
-{
-	glBindBuffer(type, 0);
-}
-
 
 class Mesh
 {

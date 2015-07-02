@@ -1,8 +1,9 @@
 #ifndef FRAMEBUFFERER_HH
 #define FRAMEBUFFERER_HH
 
-#include <GL/glew.h>
 #include "graphics.hh"
+
+#include <GL/glew.h>
 
 class Framebufferer
 {
