@@ -3,11 +3,10 @@
 
 class Framebufferer
 {
-private:
-	void CreateTexture();
-	void CreateRBO();
-	void BindToFBO();
-	void CreateShaders();
+	void createTexture();
+	void createRBO();
+	void bindToFBO();
+	void createShaders();
 public:
 	GLuint FBO, textToRenderTo, RBO;
 	GLuint VBO_for_FBO;

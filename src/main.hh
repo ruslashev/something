@@ -6,5 +6,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+void success();
+void fail();
+void info(const char *msg);
+void warn(const char *msg);
+
 #endif
 

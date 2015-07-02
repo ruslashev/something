@@ -1,20 +1,19 @@
 #include "graphics.hh"
 #include "image.hh"
-
-#define INFO_COLOR  "\x1b[36m"
-#define CLEAR_COLOR "\x1b[0m"
-
-#define SUCCESS_STR "\x1b[32m" "✓" CLEAR_COLOR
-#define FAIL_STR    "\x1b[31m" "✗" CLEAR_COLOR
+#include "main.hh"
 
 bool Mesh::FromOBJ(const char *filename)
 {
-	printf("Loading OBJ model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
+	printf("Loading OBJ model ");
+	info(filename);
+	printf("... ");
 
 	std::ifstream ifs(filename, std::ifstream::in);
 	if (!ifs) {
-		printf(FAIL_STR " fail: %d bad: %d\n", ifs.fail(), ifs.bad());
-		return false;
+		fail();
+		printf("failed to open file. fail: %d bad: %d\n",
+				ifs.fail(), ifs.bad());
+		throw;
 	}
 
 	std::string line;
@@ -33,7 +32,7 @@ bool Mesh::FromOBJ(const char *filename)
 		}
 	}
 
-	puts(SUCCESS_STR);
+	success();
 	return true;
 }
 
@@ -46,7 +45,7 @@ void Mesh::Upload()
 				vertices.size()*sizeof(vertices[0]),
 				vertices.data(), GL_STATIC_DRAW);
 	} else
-		puts("Warning: Uploading empty vertex data");
+		warn("Warning: Uploading empty vertex data");
 
 	if (elements.size() > 0) {
 		glGenBuffers(1, &IBO);
@@ -70,7 +69,7 @@ void Mesh::Upload()
 				texCoords.size()*sizeof(texCoords[0]),
 				texCoords.data(), GL_STATIC_DRAW);
 	} else
-		puts("Warning: Uploading empty texture coords");
+		warn("Warning: Uploading empty texture coords");
 }
 
 void Mesh::Draw(GLint &attrib_vCoord, GLint &attrib_texCoord)
@@ -103,30 +102,30 @@ Mesh::~Mesh()
 
 GLuint CreateShader(GLenum type, const char *src)
 {
-	printf("Compiling %s shader \t\t\t",
-			type == GL_VERTEX_SHADER ? "vertex" : "fragment");
+	printf("Compiling ");
+	info(type == GL_VERTEX_SHADER ? "vertex" : "fragment");
+	printf(" shader... ");
 
-	GLint compileSuccess = GL_FALSE;
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &src, NULL);
 	glCompileShader(shader);
 
+	GLint compileSuccess = GL_FALSE;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compileSuccess);
 	if (!compileSuccess) {
-		puts(FAIL_STR);
+		fail();
 		printLog(shader);
-		return 0;
-	}
+		throw;
+	} else
+		success();
 
-	puts(SUCCESS_STR);
 	return shader;
 }
 
-GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
+GLuint LinkShadersToProgram(GLuint &vertShader, GLuint &fragShader)
 {
-	printf("Linking shaders\t\t\t\t\t");
+	printf("Linking shaders... ");
 
-	GLint linkSuccess = GL_FALSE;
 	GLuint glslProgram = glCreateProgram();
 
 	glAttachShader(glslProgram, vertShader);
@@ -134,49 +133,60 @@ GLuint LinkShaders(GLuint &vertShader, GLuint &fragShader)
 
 	glLinkProgram(glslProgram);
 
+	GLint linkSuccess = GL_FALSE;
 	glGetProgramiv(glslProgram, GL_LINK_STATUS, &linkSuccess);
 	if (!linkSuccess) {
-		puts(FAIL_STR);
+		fail();
 		printLog(glslProgram);
-		return 0;
-	}
+		throw;
+	} else
+		success();
 
-	printf(SUCCESS_STR "\n" "Validating GLSL program\t\t\t\t");
+	printf("Validating GLSL program... ");
+
+	glValidateProgram(glslProgram);
 
 	GLint validateSuccess = GL_FALSE;
-	glValidateProgram(glslProgram);
 	glGetProgramiv(glslProgram, GL_VALIDATE_STATUS, &validateSuccess);
 	if (!validateSuccess) {
-		puts(FAIL_STR);
+		fail();
 		printLog(glslProgram);
-		return 0;
-	}
+		throw;
+	} else
+		success();
 
-	puts(SUCCESS_STR);
 	return glslProgram;
 }
 
 GLint BindAttribute(const char *name, GLuint &glslProgram)
 {
-	printf("Binding attribute %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
+	printf("Binding attribute ");
+	info(name);
+	printf("... ");
+
 	GLint attribute = glGetAttribLocation(glslProgram, name);
 	if (attribute == -1) {
-		puts(FAIL_STR);
-		return -1;
-	}
-	puts(SUCCESS_STR);
+		fail();
+		throw;
+	} else
+		success();
+
 	return attribute;
 }
 
 GLint BindUniform(const char *name, GLuint &glslProgram)
 {
-	printf("Binding uniform %s%-12s%s\t\t\t", INFO_COLOR, name, CLEAR_COLOR);
+	printf("Binding uniform ");
+	info(name);
+	printf("... ");
+
 	GLint uniform = glGetUniformLocation(glslProgram, name);
 	if (uniform == -1) {
-		puts(FAIL_STR);
-		return -1;
-	}
-	puts(SUCCESS_STR);
+		fail();
+		throw;
+	} else
+		success();
+
 	return uniform;
 }
 
@@ -201,6 +211,7 @@ void printLog(GLuint &shaderOrProg)
 		glGetProgramInfoLog(shaderOrProg, logLength, NULL, log);
 
 	puts(log);
+
 	delete [] log;
 }
 

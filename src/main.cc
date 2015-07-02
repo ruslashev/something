@@ -50,24 +50,14 @@ int main()
 
 	GLuint vertShader = CreateShader(GL_VERTEX_SHADER, vertShaderSrc);
 	GLuint fragShader = CreateShader(GL_FRAGMENT_SHADER, fragShaderSrc);
-	if (!vertShader || !fragShader)
-		return 2;
 
-	GLuint glslProgram = LinkShaders(vertShader, fragShader);
-	if (!glslProgram)
-		return 2;
+	GLuint glslProgram = LinkShadersToProgram(vertShader, fragShader);
 
 	GLint attrib_vCoord = BindAttribute("vCoord", glslProgram);
 	GLint attrib_texCoord = BindAttribute("texCoord", glslProgram);
-	if (attrib_vCoord == -1 || attrib_texCoord == -1)
-		return 2;
 
 	GLint uniformMVP = BindUniform("MVP", glslProgram);
-	if (uniformMVP == -1)
-		return 2;
 	mapMesh.textUnif = BindUniform("tex0", glslProgram);
-	if (mapMesh.textUnif == -1)
-		return 2;
 
 	Framebufferer fbm;
 
@@ -147,5 +137,30 @@ int main()
 	glDeleteShader(vertShader);
 	glDeleteShader(fragShader);
 	glDeleteProgram(glslProgram);
+}
+
+void success()
+{
+	const char *green = "\x1b[32m";
+	const char *reset = "\x1b[0m";
+	printf("%s" "✓" "%s\n", green, reset);
+}
+void fail()
+{
+	const char *red   = "\x1b[31m";
+	const char *reset = "\x1b[0m";
+	printf("%s" "✗" "%s\n", red, reset);
+}
+void info(const char *msg)
+{
+	const char *blue  = "\x1b[36m";
+	const char *reset = "\x1b[0m";
+	printf("%s" "%s" "%s", blue, msg, reset);
+}
+void warn(const char *msg)
+{
+	const char *yellow  = "\x1b[33m";
+	const char *reset = "\x1b[0m";
+	printf("%s" "%s" "%s\n", yellow, msg, reset);
 }
 

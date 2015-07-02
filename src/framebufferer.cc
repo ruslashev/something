@@ -1,16 +1,14 @@
 #include "graphics.hh"
 #include "framebufferer.hh"
-
-#define SUCCESS_STR "\x1b[32m" "✓" "\x1b[0m"
-#define FAIL_STR    "\x1b[31m" "✗" "\x1b[0m"
+#include "main.hh"
 
 Framebufferer::Framebufferer()
 {
-	CreateTexture();
+	createTexture();
 
-	CreateRBO();
+	createRBO();
 
-	BindToFBO();
+	bindToFBO();
 
 	const GLfloat screenQuad[] = { -1, -1,  1, -1, -1,  1,  1,  1 };
 	glGenBuffers(1, &VBO_for_FBO);
@@ -18,22 +16,16 @@ Framebufferer::Framebufferer()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(screenQuad), screenQuad, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	CreateShaders();
+	createShaders();
 
-	ppProg = LinkShaders(vertShaderPP, fragShaderPP);
-	if (!ppProg)
-		exit(2);
+	ppProg = LinkShadersToProgram(vertShaderPP, fragShaderPP);
 
 	attrib_vCoordPP = BindAttribute("vCoord", ppProg);
-	if (attrib_vCoordPP == -1)
-		exit(2);
 
 	uniformFBOtext = BindUniform("fboText", ppProg);
-	if (uniformFBOtext == -1)
-		exit(2);
 }
 
-void Framebufferer::CreateTexture()
+void Framebufferer::createTexture()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &textToRenderTo);
@@ -47,7 +39,7 @@ void Framebufferer::CreateTexture()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Framebufferer::CreateRBO()
+void Framebufferer::createRBO()
 {
 	glGenRenderbuffers(1, &RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
@@ -55,7 +47,7 @@ void Framebufferer::CreateRBO()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
-void Framebufferer::BindToFBO()
+void Framebufferer::bindToFBO()
 {
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -70,7 +62,7 @@ void Framebufferer::BindToFBO()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebufferer::CreateShaders()
+void Framebufferer::createShaders()
 {
 #define GLSL(src) "#version 120\n" #src
 	const char *vertPPShaderSrc = GLSL(
@@ -98,8 +90,6 @@ void Framebufferer::CreateShaders()
 
 	vertShaderPP = CreateShader(GL_VERTEX_SHADER, vertPPShaderSrc);
 	fragShaderPP = CreateShader(GL_FRAGMENT_SHADER, fragPPShaderSrc);
-	if (!vertShaderPP || !fragShaderPP)
-		exit(2);
 }
 
 Framebufferer::~Framebufferer()
