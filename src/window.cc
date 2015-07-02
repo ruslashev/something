@@ -1,5 +1,7 @@
-#include "window.hh"
 #include "main.hh"
+#include <GL/glew.h>
+#include <fstream>
+#include "window.hh"
 
 Window::Window(int nwidth, int nheight, const char *title)
 {

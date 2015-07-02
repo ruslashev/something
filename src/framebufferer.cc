@@ -1,6 +1,6 @@
-#include "graphics.hh"
-#include "framebufferer.hh"
 #include "main.hh"
+#include <vector>
+#include "framebufferer.hh"
 
 Framebufferer::Framebufferer()
 {
@@ -8,13 +8,11 @@ Framebufferer::Framebufferer()
 
 	createRBO();
 
-	bindToFBO();
+	bind();
 
-	const GLfloat screenQuad[] = { -1, -1,  1, -1, -1,  1,  1,  1 };
-	glGenBuffers(1, &VBO_for_FBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_for_FBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenQuad), screenQuad, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	std::vector<GLfloat> screenQuad = { -1, -1,  1, -1, -1,  1,  1,  1 };
+	vbo.Construct(GL_ARRAY_BUFFER);
+	vbo.Upload(&screenQuad);
 
 	createShaders();
 
@@ -47,8 +45,9 @@ void Framebufferer::createRBO()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
-void Framebufferer::bindToFBO()
+void Framebufferer::bind()
 {
+	printf("Binding framebuffer... ");
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glFramebufferTexture2D(
@@ -56,9 +55,10 @@ void Framebufferer::bindToFBO()
 	glFramebufferRenderbuffer(
 		GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RBO);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		puts("oh shit");
-		exit(2);
-	}
+		fail();
+		throw;
+	} else
+		success();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -94,7 +94,6 @@ void Framebufferer::createShaders()
 
 Framebufferer::~Framebufferer()
 {
-	glDeleteBuffers(1, &VBO_for_FBO);
 	glDeleteShader(vertShaderPP);
 	glDeleteShader(fragShaderPP);
 	glDeleteProgram(ppProg);

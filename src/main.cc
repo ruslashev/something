@@ -1,9 +1,14 @@
-#include "graphics.hh"
 #include "main.hh"
+#include "graphics.hh"
 #include "window.hh"
 #include "interaction.hh"
 #include "framebufferer.hh"
 #include "voxelworld.hh"
+
+#include <string>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 
@@ -122,7 +127,7 @@ int main()
 			glUniform1i(fbm.uniformFBOtext, GL_TEXTURE0);
 			glEnableVertexAttribArray(fbm.attrib_vCoordPP);
 
-			glBindBuffer(GL_ARRAY_BUFFER, fbm.VBO_for_FBO);
+			fbm.vbo.Bind();
 			glVertexAttribPointer(fbm.attrib_vCoordPP, 2, GL_FLOAT, GL_FALSE, 0, 0);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			glDisableVertexAttribArray(fbm.attrib_vCoordPP);

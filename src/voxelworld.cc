@@ -1,6 +1,9 @@
-#include "graphics.hh"
-#include "main.hh"
 #include "voxelworld.hh"
+#include "main.hh"
+
+#include <iostream>
+#include <sstream>
+#include <vector>
 
 bool aabbsCollide(AABB a, AABB b)
 {
@@ -14,8 +17,7 @@ bool aabbsCollide(AABB a, AABB b)
 
 void VoxelWorld::fromFile(const char *filename)
 {
-	if (!readVoxels(filename))
-		exit(1);
+	readVoxels(filename);
 	createMesh();
 }
 

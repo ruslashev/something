@@ -1,21 +1,23 @@
 #ifndef FRAMEBUFFERER_HH
 #define FRAMEBUFFERER_HH
 
+#include <GL/glew.h>
+#include "graphics.hh"
+
 class Framebufferer
 {
 	void createTexture();
 	void createRBO();
-	void bindToFBO();
+	void bind();
 	void createShaders();
 public:
 	GLuint FBO, textToRenderTo, RBO;
-	GLuint VBO_for_FBO;
+	ArrayBuffer<GLfloat> vbo;
 	GLuint ppProg, vertShaderPP, fragShaderPP;
 	GLint attrib_vCoordPP, uniformFBOtext;
 
 	Framebufferer();
 	~Framebufferer();
-
 };
 
 #endif

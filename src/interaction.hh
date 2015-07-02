@@ -1,8 +1,7 @@
 #ifndef INTERACTION_HH
 #define INTERACTION_HH
 
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "window.hh"
 
 class BaseEntity
 {
