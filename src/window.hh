@@ -6,7 +6,7 @@
 #include <fstream>
 
 void CallbackError(int errorCode, const char *description);
-void CallbackFBsizeChange(GLFWwindow *window, int width, int height);
+void CallbackFBsizeChange(GLFWwindow*, int width, int height);
 
 class Window
 {
@@ -14,7 +14,7 @@ public:
 	GLFWwindow *win;
 	int width, height;
 
-	Window(int newWidth, int newHeight, const char *title);
+	Window(int nwidth, int nheight, const char *title);
 	~Window();
 };
 

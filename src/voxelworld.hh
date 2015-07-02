@@ -4,8 +4,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "graphics.hh"
-
 struct AABB { int x, y, z; double w, h, d; };
 
 bool aabbsCollide(AABB a, AABB b);

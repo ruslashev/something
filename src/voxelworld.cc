@@ -1,10 +1,6 @@
+#include "graphics.hh"
+#include "main.hh"
 #include "voxelworld.hh"
-
-#define INFO_COLOR  "\x1b[36m"
-#define CLEAR_COLOR "\x1b[0m"
-
-#define SUCCESS_STR "\x1b[32m" "✓" CLEAR_COLOR
-#define FAIL_STR    "\x1b[31m" "✗" CLEAR_COLOR
 
 bool aabbsCollide(AABB a, AABB b)
 {
@@ -25,12 +21,16 @@ void VoxelWorld::fromFile(const char *filename)
 
 bool VoxelWorld::readVoxels(const char *filename)
 {
-	printf("Loading VXL model %s%-12s%s\t\t\t", INFO_COLOR, filename, CLEAR_COLOR);
+	printf("Loading VXL model ");
+	info(filename);
+	printf("... ");
 
 	std::ifstream ifs(filename, std::ifstream::in);
 	if (!ifs) {
-		printf(FAIL_STR " fail: %d bad: %d\n", ifs.fail(), ifs.bad());
-		return false;
+		fail();
+		printf("failed to open file. fail: %d bad: %d\n",
+				ifs.fail(), ifs.bad());
+		throw;
 	}
 
 	std::string line;
@@ -43,7 +43,7 @@ bool VoxelWorld::readVoxels(const char *filename)
 		}
 	}
 
-	puts(SUCCESS_STR);
+	success();
 	return true;
 }
 
@@ -52,7 +52,7 @@ void VoxelWorld::createMesh()
 	for (AABB &box : voxels) {
 		const int x = box.x, y = box.y, z = box.z;
 		std::vector<glm::vec4> *verts = &voxelMesh.vertices;
-		// sort of alias, to not to write voxelMesh.vertices.push_back(..
+		// alias, to not to write voxelMesh.vertices.push_back(..
 
 		verts->push_back(glm::vec4(x  , y+1, z  , 1));
 		verts->push_back(glm::vec4(x  , y  , z  , 1));
